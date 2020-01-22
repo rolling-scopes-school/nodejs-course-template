@@ -1,0 +1,531 @@
+openapi: 3.0.0
+info:
+  title: Trello Service
+  description: Let's try to create a competitor for Trello!
+  version: 1.0.0
+
+servers:
+  - url: /
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        login:
+          type: string
+    Board:
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        columns:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              order:
+                type: integer
+    Task:
+      required:
+        - title
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        order:
+          type: number
+        description:
+          type: string
+        userId: 
+          type: string
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+paths:
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: Gets all users (remove password from response)
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Users
+      summary: Create user
+      description: Creates a new user (remove password from response)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                name:
+                  type: string
+                  description: The user's name
+                login:
+                  type: string
+                  description: The user's login
+                password:
+                  type: string
+                  description: The user's password
+              required:
+                - name
+      responses:
+        200:
+          description: The user has been created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /users/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Users
+      summary: Get user by ID
+      description: Gets a user by ID
+        e.g. “/users/123” (remove password from response)
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: User not found
+    put:
+      tags:
+        - Users
+      summary: Update a user
+      description: Updates a user by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                name:
+                  type: string
+                  description: The user's name
+                login:
+                  type: string
+                  description: The user's login
+                password:
+                  type: string
+                  description: The user's password
+              required:
+                - name
+      responses:
+        200:
+          description: The user has been updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      description: Deletes user by ID. When somebody
+        DELETE User, all Tasks where User is assignee
+        should be updated to put userId=null
+      responses:
+        204:
+          description: The user has been deleted
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: User not found
+  /boards:
+    get:
+      tags:
+        - Boards
+      summary: Get all boards
+      description: Returns all boards
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Board"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Boards
+      summary: Create board
+      description: Creates a new board
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                title:
+                  type: string
+                  description: The board's name
+                columns:
+                  type: array
+                  description: The board's column list
+                  items:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                      order:
+                        type: integer
+                  required:
+                    - title
+                    - order
+              required:
+                - title
+                - columns
+      responses:
+        200:
+          description: The board has been created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Board"
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /boards/{boardId}:
+    parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Boards
+      summary: Get board by id
+      description: Gets the Board by ID (e.g. “/boards/123”)
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Board"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Board not found
+    put:
+      tags:
+        - Boards
+      summary: Update board
+      description: Updates a Board by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                id:
+                  type: string
+                title:
+                  type: string
+                  description: The board's name
+                columns:
+                  type: array
+                  description: The board's column list
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        description: column's id
+                      title:
+                        type: string
+                        description: column's title
+                      order:
+                        type: integer
+                  required:
+                    - title
+                    - order
+              required:
+                - title
+                - columns
+      responses:
+        200:
+          description: The board has been updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Board"
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    delete:
+      tags:
+        - Boards
+      summary: Delete board
+      description: Deletes a Board by ID.
+        When somebody DELETE Board,
+        all its Tasks should be deleted as well
+      responses:
+        204:
+          description: The board has been deleted
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Board not found
+  /boards/{boardId}/tasks:
+    parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Tasks
+      summary: Get Tasks by boardId
+      description: Gets tasks by the Board ID
+        (e.g. “/board/1/tasks”)
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+
+    post:
+      tags:
+        - Tasks
+      summary: Create new task
+      description: Creates a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                title:
+                  type: string
+                  description: The task's title
+                order:
+                  type: integer
+                  description: The task's order
+                description:
+                  type: string
+                userId:
+                  type: string
+                  description: The task's Assignee
+                boardId:
+                  type: string
+                  description: Board ID
+                columnId:
+                  type: string
+                  description: Column ID
+              required:
+                - title
+                - order
+                - boardId
+                - columnId
+      responses:
+        200:
+          description: The task has been created.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"           
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /boards/{boardId}/tasks/{taskId}:
+    parameters:
+      - name: boardId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: taskId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Tasks
+      summary: Get Task by boardId and taskId
+      description: Gets the Task by the Board's and task ID
+        (e.g. “/board/1/tasks/123”)
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      tags:
+        - Tasks
+      summary: Update Task
+      description: Updates the Task by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                id:
+                  type: string
+                  title: The task's ID
+                title:
+                  type: string
+                  description: The task's title
+                order:
+                  type: integer
+                  description: The task's order
+                description:
+                  type: string
+                userId:
+                  type: string
+                  description: The task's Assignee
+                boardId:
+                  type: string
+                  description: Board ID
+                columnId:
+                  type: string
+                  description: Column ID
+              required:
+                - id
+                - order
+                - boardId
+                - columnId
+      responses:
+        200:
+          description: The task has been updated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Task not found
+    delete:
+      tags:
+        - Tasks
+      summary: Delete Task
+      description: Deletes Task by ID.
+      responses:
+        204:
+          description: The task has been deleted
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Task not found
+  /login:
+    post:
+      tags:
+        - Login
+      security:
+        []
+      summary: Login
+      description: Logins a user and returns a JWT-token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                login:
+                  type: string
+                  description: Username
+                password:
+                  type: string
+                  description: Password
+              required:
+                - user
+                - login
+      responses:
+        200:
+          description: Successful login.
+          content:
+            application/json:
+              schema:
+                type: string
+                description: JWT Token          
+        403:
+          description: Incorrect login or password
