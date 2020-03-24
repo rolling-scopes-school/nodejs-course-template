@@ -28,7 +28,7 @@ CLI tool should accept 4 options (short alias and full name):
 4. If the output file is missed - use stdout as an output destination.
 5. If the input and/or output file is given but doesn't exist or you can't read it (e.g. because of permissions or it is a directory) - human-friendly error should be printed in stderr.
 6. If passed params are fine the output (file or stdout) should contain encoded/decoded content of input (file or stdin).
-7. For encoding/decoding use only the English alphabet (lower-case), all other characters should be kept untouched.
+7. For encoding/decoding use only the English alphabet, all other characters should be kept untouched.
 
 **Hints:**
 As suggested solution to make streams code more robust, and memory effective, consider to use [pipeline method](https://nodejs.org/api/stream.html#stream_stream_pipeline_streams_callback).
