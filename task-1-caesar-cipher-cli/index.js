@@ -1,28 +1,45 @@
-const readline = require('readline');
+const readline = require("readline");
+const path = require("path");
+const fs = require("fs");
 
-const { action, shift, input, output } = require('./checkParams');
-const { decode, encode } = require('./caesarCipher');
+const { action, shift, input, output } = require("./checkParams");
+const { transformStream } = require("./createTransformStream");
+const { readStream } = require("./readStream");
+
+const transformText = (stream) => {
+    let transformChunk = transformStream({ shift, action });
+    stream.pipe(transformChunk);
+
+};
 
 const nextLine = () => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    });
 
-  rl.on('line', input => {
-    let str = '';
-    if (action === 'decode') {
-      str = decode({ text: input, shift });
-    } else if (action === 'encode') {
-      str = encode({ text: input, shift });
-    }
-    console.log(str);
-    rl.close();
-    nextLine();
-  });
+        rl.on('line', input => {
+        transformText(readStream(input));
+        rl.close();
+        nextLine();
+    });
 };
 
 if (input) {
-} else {
-  nextLine();
+    const inputPath = path.join(__dirname, input);
+    fs.stat(inputPath, (error, stats) => {
+        if(error) {
+            process.stderr("File not found");
+            process.exit(11)
+        } else {
+            const readingStream = fs.createReadStream( inputPath, {
+                encoding: "utf8",
+                objectMode: true,
+            });
+            transformText(readingStream);
+        }
+    })
+
+    } else {
+        nextLine();
 }
