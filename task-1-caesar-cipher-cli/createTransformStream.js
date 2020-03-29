@@ -7,7 +7,6 @@ exports.transformStream = ({ shift, action }) => {
         writableObjectMode: true,
         transform(chunk, encoding, callback) {
             this.push(makeCaesarCipher({text: chunk, action, shift}));
-            console.log(makeCaesarCipher({text: chunk, action, shift}));
             callback();
         }
     })

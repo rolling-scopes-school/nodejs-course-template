@@ -7,9 +7,23 @@ const { transformStream } = require("./createTransformStream");
 const { readStream } = require("./readStream");
 
 const transformText = (stream) => {
+    const outputPath = output ? path.join(__dirname, output) : "";
     let transformChunk = transformStream({ shift, action });
-    stream.pipe(transformChunk);
+    stream = stream.pipe(transformChunk);
 
+    if(output) {
+        let writeStream  = fs.createWriteStream(outputPath, {
+            flags: "a",
+        });
+
+        writeStream.on('error', (err) => {
+            console.log(err);
+        });
+
+        stream.pipe(writeStream);
+    } else {
+        stream.pipe(process.stdout);
+    }
 };
 
 const nextLine = () => {
@@ -26,7 +40,7 @@ const nextLine = () => {
 };
 
 if (input) {
-    const inputPath = path.join(__dirname, input);
+    const inputPath = input ? path.join(__dirname, input) : "";
     fs.stat(inputPath, (error, stats) => {
         if(error) {
             process.stderr("File not found");
