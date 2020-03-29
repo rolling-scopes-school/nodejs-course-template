@@ -132,5 +132,5 @@ Let's try to create a competitor for Trello!
 
 **Hints**
 
-* To test the service CRUD methods you can use Swagger html (see [README.md](https://github.com/rolling-scopes-school/nodejs-course-template/blob/master/README.md)).
+* To test the service CRUD methods you can use Swagger html (see [README.md](https://github.com/rolling-scopes-school/nodejs-course-template/blob/master/README.md#running-application)).
 * To generate all entities “id”s use [uuid](https://www.npmjs.com/package/uuid) package.
