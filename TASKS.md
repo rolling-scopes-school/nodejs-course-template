@@ -101,7 +101,7 @@ Let's try to create a competitor for Trello!
       * `GET /users` - get all users (remove password from response)
       * `GET /users/:id` - get the user by id (ex. “/users/123”) (remove password from response)
       * `POST /users` - create user
-      * `PUT /users` - update user
+      * `PUT /users/:id` - update user
       * `DELETE /users/:id` - delete user
     * `/boards`
       * GET all
