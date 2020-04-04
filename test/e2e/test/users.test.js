@@ -35,6 +35,12 @@ describe('Users suite', () => {
 
     it('should get a user by id', async () => {
       // Setup:
+      //Create the user
+      await request
+          .post(routes.users.create)
+          .set('Accept', 'application/json')
+          .send(TEST_USER_DATA);
+
       const usersResponse = await request
         .get(routes.users.getAll)
         .set('Accept', 'application/json')
@@ -51,6 +57,9 @@ describe('Users suite', () => {
 
       expect(userResponse.body).to.be.instanceOf(Object);
       expect(userResponse.body.id).to.equal(userId);
+
+      // Clean up, delete the user we created
+      await request.delete(routes.users.delete(userId));
     });
   });
 
