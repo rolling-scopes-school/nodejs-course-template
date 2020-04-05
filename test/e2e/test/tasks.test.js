@@ -92,6 +92,8 @@ describe('Tasks suite', () => {
 
   describe('POST', () => {
     it('should create task successfully', async () => {
+      let taskId;
+
       await request
         .post(routes.tasks.create(testBoardId))
         .set('Accept', 'application/json')
@@ -100,11 +102,15 @@ describe('Tasks suite', () => {
         .expect('Content-Type', /json/)
         .then(res => {
           expect(res.body.id).to.be.a('string');
+          taskId = res.body.id;
           jestExpect(res.body).toMatchObject({
             ...TEST_TASK_DATA,
             boardId: testBoardId
           });
         });
+
+      // Teardown
+      await request.delete(routes.tasks.delete(testBoardId, taskId));
     });
   });
 

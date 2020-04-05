@@ -67,55 +67,60 @@ describe('Boards suite', () => {
 
   describe('POST', () => {
     it('should create board successfully', async () => {
-      await request
-        .post(routes.boards.create)
-        .set('Accept', 'application/json')
-        .send(TEST_BOARD_DATA)
-        .expect(200)
-        .expect('Content-Type', /json/)
-        .then(res => {
-          expect(res.body.id).to.be.a('string');
-          jestExpect(res.body).toMatchObject(TEST_BOARD_DATA);
-        });
-    });
-  });
-
-  describe('PUT', () => {
-    it('should update board successfully', async () => {
-      // Setup
       let boardId;
 
       await request
         .post(routes.boards.create)
         .set('Accept', 'application/json')
         .send(TEST_BOARD_DATA)
+        .expect(200)
+        .expect('Content-Type', /json/)
         .then(res => {
           boardId = res.body.id;
+          expect(res.body.id).to.be.a('string');
+          jestExpect(res.body).toMatchObject(TEST_BOARD_DATA);
+        });
+
+      // Teardown
+      await request.delete(routes.boards.delete(boardId));
+    });
+  });
+
+  describe('PUT', () => {
+    it('should update board successfully', async () => {
+      // Setup
+      let boardToUpdate;
+
+      await request
+        .post(routes.boards.create)
+        .set('Accept', 'application/json')
+        .send(TEST_BOARD_DATA)
+        .then(res => {
+          boardToUpdate = res.body;
         });
 
       const updatedBoard = {
-        ...TEST_BOARD_DATA,
-        title: 'Autotest updated board',
-        id: boardId
+        ...boardToUpdate,
+        title: 'Autotest updated board'
       };
 
       // Test
       await request
-        .put(routes.boards.update(boardId))
+        .put(routes.boards.update(boardToUpdate.id))
         .set('Accept', 'application/json')
         .send(updatedBoard)
         .expect(200)
         .expect('Content-Type', /json/);
 
       await request
-        .get(routes.boards.getById(boardId))
+        .get(routes.boards.getById(updatedBoard.id))
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
         .then(res => jestExpect(res.body).toMatchObject(updatedBoard));
 
       // Teardown
-      await request.delete(routes.boards.delete(boardId));
+      await request.delete(routes.boards.delete(updatedBoard.id));
     });
   });
 
