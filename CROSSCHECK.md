@@ -24,8 +24,8 @@ N.B. `console.error` пишет ошибку в `process.stderr`, большин
 При выставлении оценок используйте [рекомендации RSSchool](https://docs.rs.school/#/cross-check-flow?id=%d0%9f%d1%80%d0%b8%d0%bd%d1%86%d0%b8%d0%bf-%d0%be%d1%86%d0%b5%d0%bd%d0%ba%d0%b8-%d1%80%d0%b0%d0%b1%d0%be%d1%82%d1%8b-%d0%bf%d1%80%d0%b8-cross-check-%d0%bf%d1%80%d0%be%d0%b2%d0%b5%d1%80%d0%ba%d0%b5).
 Оценка за таску не может быть меньше 0.
 
-1. все тесты, запускаемые скриптом `npm run test` проходят успешно + 100 баллов, за каждый непроходящий тест минус 10 баллов.
-2. в тестах не должно быть исправлений, за исключением обновлений из [репозитория RS School](https://github.com/rolling-scopes-school/nodejs-course-template/tree/master). Если есть другие изменения в файлах с тестами, то минус 50 баллов.
+1. каждый успешный тест при выполнении скрипта `npm run test` +10 баллов.
+2. в тестах не должно быть исправлений, за исключением обновлений из [репозитория RS School](https://github.com/rolling-scopes-school/nodejs-course-template/tree/master). Если есть другие изменения в файлах с тестами, за каждый исправленный тест минус 10 баллов.
 
   >  **Как обновиться из [репозитория RS School](https://github.com/rolling-scopes-school/nodejs-course-template/tree/master)**
   >  1. Установить VSCode как дефолтный GIT редактор (не обязательный пункт)
