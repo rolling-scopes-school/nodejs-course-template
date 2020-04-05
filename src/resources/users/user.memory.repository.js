@@ -1,5 +1,7 @@
 const users = require("../../mockData/users");
 const User = require("./user.model");
+const taskService = require("../tasks/task.service");
+const boardsService = require('../boards/board.service');
 
 const getAll = async () => {
   return users;
@@ -35,10 +37,40 @@ const updateUserById = async (id, data) => {
   }
 };
 
+const findTasksByBoardId = async boardId => {
+  return await taskService.getTasksByBoardId(boardId);
+};
+
+const updateTasksData = async (BoardId, task) => {
+  return await taskService.updateTaskByBoardIdAndTaskId(
+    BoardId,
+    task.id,
+    {
+      ...task,
+      userId: null
+    }
+  );
+};
+
+const replaceActiveUserTasksToNull = async (userId) => {
+  const boards = await boardsService.getAll();
+  boards.forEach(board => {
+    const tasks = findTasksByBoardId(board.id);
+    if (tasks.length) {
+      tasks.forEach(task => {
+        if (task.userId === userId) {
+          updateTasksData(board.id, task)
+        }
+      })
+    }
+  });
+};
+
 const deleteUserById = async id => {
-  const user = await  getUserById(id);
+  const user = await getUserById(id);
   if (user) {
     users.slice(users.indexOf(user), 1);
+    await replaceActiveUserTasksToNull(id);
     return true;
   }
   return false;
