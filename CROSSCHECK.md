@@ -26,6 +26,39 @@ N.B. `console.error` пишет ошибку в `process.stderr`, большин
 
 1. все тесты, запускаемые скриптом `npm run test` проходят успешно + 100 баллов, за каждый непроходящий тест минус 10 баллов.
 2. в тестах не должно быть исправлений, за исключением обновлений из [репозитория RS School](https://github.com/rolling-scopes-school/nodejs-course-template/tree/master). Если есть другие изменения в файлах с тестами, то минус 50 баллов.
+
+  >  **Как обновиться из [репозитория RS School](https://github.com/rolling-scopes-school/nodejs-course-template/tree/master)**
+  >  1. Установить VSCode как дефолтный GIT редактор (не обязательный пункт)
+  >    ```bash
+  >      git config --global core.editor "code --wait"
+  >    ```
+  >  2. Закомитать текущие изменения
+  >  3. Добавить в качестве дополнительного удаленного репозитория темплейт
+  >    ```bash
+  >      git remote add template https://github.com/rolling-scopes-school/nodejs-course-template.git
+  >    ```
+  >  4. Применить изменения из темплейта
+  >    ```bash
+  >      git pull template master --allow-unrelated-histories
+  >    ```
+  >  5. Применить все свои изменения
+  >    ```bash
+  >      git checkout --ours ':!node_modules'
+  >    ```
+  >  6. Применить все изменения для папки `test`
+  >    ```bash
+  >      git checkout --theirs ./test
+  >    ```
+  >  7. Сохранить изменения
+  >    ```bash
+  >      git add .
+  >    ```
+  >  8. Продолжить мердж
+  >    ```bash
+  >      git commit
+  >    ```
+  >  9. Закрыть вкладку VSCode с описанием коммита. Если дефолтный редактор не меняли - выйти из VIM  `:qa`
+
 3. должна быть создана отдельная папка `boards`, с файловой структурой, аналогичной `users` темплейта + 10 баллов.
 4. должна быть создана отдельная папка `tasks`, с файловой структурой, аналогичной `users` темплейта + 10 баллов.
 5. код приложения разделен по модулям в соответствии с его назначением (работа с запросом и ответом в *.router.js, бизнес-логика в *.service.js, работа с хранилищем данных в *.repository.js и т.п.) + 20 баллов.
