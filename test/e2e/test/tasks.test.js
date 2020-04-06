@@ -158,7 +158,9 @@ describe('Tasks suite', () => {
         .delete(routes.tasks.delete(testBoardId, testTaskId))
         .then(res => expect(res.status).oneOf([200, 204]));
 
-      await request.get(routes.tasks.getById(testTaskId)).expect(404);
+      await request
+        .get(routes.tasks.getById(testBoardId, testTaskId))
+        .expect(404);
     });
   });
 });
