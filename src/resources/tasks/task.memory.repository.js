@@ -1,8 +1,8 @@
 const Task = require("./task.model");
-const  tasks = require("../../mockData/tasks");
+let tasks = require("../../mockData/tasks");
 
-const getTasksByBoardId = async (boardId) => {
-    return tasks.filter(task => task.boardId === boardId)
+const getTasksByBoardId = async boardId => {
+    return tasks.filter(task => task.boardId === boardId);
 };
 
 const createNewTask = async (boardId, task) => {
@@ -18,33 +18,37 @@ const getTaskByIdAndBoardId = async (boardId, id) => {
 const updateTaskByIdAndBoardId = async (boardId, id, data) => {
     const task = await getTaskByIdAndBoardId(boardId, id);
     const { id: taskId, title, order, description, userId, boardId: newBoardId, columnId } = data;
-    let foundTask = undefined;
     if (task) {
-        tasks.forEach(task => {
-            if (task.id === id) {
-                foundTask = {
-                    id: taskId ? taskId : task.id,
-                    title: title ? title : task.title,
-                    order: order ? order : task.order,
-                    description: description ? description : task.description,
-                    userId: userId ? userId : task.userId,
-                    boardId: newBoardId ? newBoardId : task.boardId,
-                    columnId: columnId ? columnId : task.columnId,
-                };
-                return foundTask;
-            }
-        });
-        return foundTask;
+        if (taskId) task.id = taskId;
+        if (title) task.title = title;
+        if (order !== undefined) task.order = order;
+        if (description) task.description = description;
+        if (userId) task.userId = userId;
+        if (newBoardId) task.boardId = newBoardId;
+        if (columnId) task.columnId = columnId;
     }
+    return task;
 };
 
-const deleteTaskByBoardIdAndTaskId = async (boardId, taskId) => {
-    const task = await getTaskByIdAndBoardId(boardId, taskId);
+const deleteTask = async (boardId, taskId) => {
+    const task = tasks.filter(task => task.id === taskId);
     if (task) {
-        tasks.slice(tasks.indexOf(task), 1);
-        return true;
+        tasks = tasks.filter(item => item.id !== id);
     }
-    return false;
+    return tasks;
+};
+
+const clearRemovedUserFromTasks = async userId => {
+    tasks.forEach(task => {
+        if (task.userId === userId) {
+            task.userId = null;
+        }
+    });
+};
+
+const deleteTasksByBoardId = async boardId => {
+    tasks = tasks.filter(task => task.boardId !== boardId);
+    return;
 };
 
 module.exports = {
@@ -52,5 +56,7 @@ module.exports = {
     createNewTask,
     getTaskByIdAndBoardId,
     updateTaskByIdAndBoardId,
-    deleteTaskByBoardIdAndTaskId,
+    deleteTask,
+    clearRemovedUserFromTasks,
+    deleteTasksByBoardId,
 };

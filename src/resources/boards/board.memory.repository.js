@@ -1,6 +1,5 @@
 const Board = require("./board.model");
-const boards = require("../../mockData/boards");
-const tasksService = require("../tasks/task.service");
+let boards = require("../../mockData/boards");
 
 const getAll = async () => {
     return boards;
@@ -18,45 +17,22 @@ const getBoardById = async id => {
 
 const updateBoardById = async (id, data) => {
     const board = await getBoardById(id);
-
     const { id: boardId, title, columns } = data;
-    let foundBoard = undefined;
+
     if (board) {
-        users.forEach(board => {
-            if (board.id === id) {
-                foundBoard = {
-                    id: boardId ? boardId : board.id,
-                    title: title ? title : board.title,
-                    columns: columns ? columns : board.columns,
-                };
-                return foundBoard;
-            }
-        });
-        return foundBoard;
+        if(boardId) board.id = boardId;
+        if(title) board.title = title;
+        if(columns) board.columns = columns;
     }
-};
-
-const deleteTask = async (task, boardId) => {
-    return await tasksService.deleteTaskByBoardIdAndTaskId(boardId, task.id);
-};
-
-const deleteTasksByBoardId = async boardId => {
-    const tasks = await tasksService.getTasksByBoardId(boardId);
-    if (tasks) {
-        tasks.forEach( task => {
-            deleteTask(task, boardId)
-        })
-    }
+    return board;
 };
 
 const deleteBoardById = async id => {
-    const board = await getBoardById(id);
+    const board = boards.find(board => board.id === id);
     if (board) {
-        boards.slice(boards.indexOf(board), 1);
-        await deleteTasksByBoardId(id);
-        return true;
+        boards = boards.filter(user => user.id !== id);
     }
-    return false;
+    return board;
 };
 
 module.exports = { getAll, createNewBoard, getBoardById, updateBoardById, deleteBoardById };

@@ -1,16 +1,14 @@
-const users = require("../../mockData/users");
+let users = require("../../mockData/users");
 const User = require("./user.model");
-const taskService = require("../tasks/task.service");
-const boardsService = require('../boards/board.service');
 
 const getAll = async () => {
   return users;
 };
 
-const createNewUser = async user => {
-  const newUser = new User(user);
+const createNewUser = async userData => {
+  const newUser = new User({ ...userData });
   users.push(newUser);
-  return newUser
+  return newUser;
 };
 
 const getUserById = async id => {
@@ -19,61 +17,21 @@ const getUserById = async id => {
 
 const updateUserById = async (id, data) => {
   const user = await getUserById(id);
-
   const { name, login, password } = data;
-  let foundUser = undefined;
   if (user) {
-    users.forEach(user => {
-      if (user.id === id) {
-        foundUser = {
-          name: name ? name : user.name,
-          login: login ? login : user.login,
-          password: password ? password : user.password,
-        };
-        return foundUser;
-      }
-    });
-    return foundUser;
+    if (name) user.name = name;
+    if (login) user.login = login;
+    if (password) user.password = password;
   }
+  return user;
 };
 
-const findTasksByBoardId = async boardId => {
-  return await taskService.getTasksByBoardId(boardId);
-};
-
-const updateTasksData = async (BoardId, task) => {
-  return await taskService.updateTaskByBoardIdAndTaskId(
-    BoardId,
-    task.id,
-    {
-      ...task,
-      userId: null
-    }
-  );
-};
-
-const replaceActiveUserTasksToNull = async (userId) => {
-  const boards = await boardsService.getAll();
-  boards.forEach(board => {
-    const tasks = findTasksByBoardId(board.id);
-    if (tasks.length) {
-      tasks.forEach(task => {
-        if (task.userId === userId) {
-          updateTasksData(board.id, task)
-        }
-      })
-    }
-  });
-};
-
-const deleteUserById = async id => {
-  const user = await getUserById(id);
+const deleteUserById = id => {
+  const user = users.find(user => user.id === id);
   if (user) {
-    users.slice(users.indexOf(user), 1);
-    await replaceActiveUserTasksToNull(id);
-    return true;
+    users = users.filter(user => user.id !== id);
   }
-  return false;
+  return user;
 };
 
 module.exports = { getAll, createNewUser, getUserById, updateUserById, deleteUserById };
