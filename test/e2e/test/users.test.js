@@ -43,18 +43,19 @@ describe('Users suite', () => {
 
     it('should get a user by id', async () => {
       // Setup:
-      //Create the user
-      await request
-          .post(routes.users.create)
-          .set('Accept', 'application/json')
-          .send(TEST_USER_DATA);
+      let userId;
 
-      const usersResponse = await request
-        .get(routes.users.getAll)
+      // Create the user
+      await request
+        .post(routes.users.create)
         .set('Accept', 'application/json')
+        .send(TEST_USER_DATA)
         .expect(200)
-        .expect('Content-Type', /json/);
-      const userId = ((usersResponse.body || [])[0] || {}).id;
+        .expect('Content-Type', /json/)
+        .then(res => {
+          expect(res.body.id).to.be.a('string');
+          userId = res.body.id;
+        });
 
       // Test:
       const userResponse = await request
