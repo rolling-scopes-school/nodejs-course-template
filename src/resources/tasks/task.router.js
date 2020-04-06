@@ -38,7 +38,7 @@ router
     })
     .delete(async (req, res, next) => {
         const { taskId } = req.params;
-        const task = taskService.deleteTask(taskId);
+        const task = await taskService.deleteTask(taskId);
         if (task) {
             return res.status(204).json({ message: "The task has been deleted" })
         }

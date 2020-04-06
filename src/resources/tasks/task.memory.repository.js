@@ -30,12 +30,12 @@ const updateTaskByIdAndBoardId = async (boardId, id, data) => {
     return task;
 };
 
-const deleteTask = async (boardId, taskId) => {
+const deleteTask = async taskId => {
     const task = tasks.filter(task => task.id === taskId);
     if (task) {
-        tasks = tasks.filter(item => item.id !== id);
+        tasks = tasks.filter(task => task.id !== taskId);
     }
-    return tasks;
+    return task;
 };
 
 const clearRemovedUserFromTasks = async userId => {
@@ -48,7 +48,6 @@ const clearRemovedUserFromTasks = async userId => {
 
 const deleteTasksByBoardId = async boardId => {
     tasks = tasks.filter(task => task.boardId !== boardId);
-    return;
 };
 
 module.exports = {
