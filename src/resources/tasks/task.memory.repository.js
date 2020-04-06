@@ -11,12 +11,12 @@ const createNewTask = async (boardId, task) => {
     return newTask
 };
 
-const getTaskByIdAndBoardId = async (boardId, id) => {
-    return tasks.find(task => task.id === id || task.boardId === boardId);
+const getTaskById = async (id) => {
+    return tasks.find(task => task.id === id);
 };
 
-const updateTaskByIdAndBoardId = async (boardId, id, data) => {
-    const task = await getTaskByIdAndBoardId(boardId, id);
+const updateTaskById = async (id, data) => {
+    const task = await getTaskById(id);
     const { id: taskId, title, order, description, userId, boardId: newBoardId, columnId } = data;
     if (task) {
         if (taskId) task.id = taskId;
@@ -31,7 +31,7 @@ const updateTaskByIdAndBoardId = async (boardId, id, data) => {
 };
 
 const deleteTask = async taskId => {
-    const task = tasks.filter(task => task.id === taskId);
+    const task = await getTaskById(taskId);
     if (task) {
         tasks = tasks.filter(task => task.id !== taskId);
     }
@@ -53,8 +53,8 @@ const deleteTasksByBoardId = async boardId => {
 module.exports = {
     getTasksByBoardId,
     createNewTask,
-    getTaskByIdAndBoardId,
-    updateTaskByIdAndBoardId,
+    getTaskById,
+    updateTaskById,
     deleteTask,
     clearRemovedUserFromTasks,
     deleteTasksByBoardId,

@@ -18,18 +18,17 @@ router
 router
     .route("/:taskId")
     .get(async (req, res, next) => {
-        const { boardId } = req;
         const { taskId } = req.params;
-        const task = await taskService.getTaskByIdAndBoardId(boardId, taskId);
+        const task = await taskService.getTaskById(taskId);
         if (task) {
             return res.status(200).json(task)
         }
         return next({ status: 404, message: "Task not found" });
     })
     .put(async (req, res, next) => {
-        const { boardId, body } = req;
+        const { body } = req;
         const { taskId } = req.params;
-        const task = await taskService.updateTaskByIdAndBoardId(boardId, taskId, body);
+        const task = await taskService.updateTaskById(taskId, body);
 
         if (task) {
             return  res.status(200).json(task)

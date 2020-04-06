@@ -6,9 +6,9 @@ const deleteTasksByBoardId = boardId => tasksRepo.deleteTasksByBoardId(boardId);
 
 const createNewTask = (boardId, task) => tasksRepo.createNewTask(boardId, task);
 
-const getTaskByIdAndBoardId = (boardId, id) => tasksRepo.getTaskByIdAndBoardId(boardId, id);
+const getTaskById = (id) => tasksRepo.getTaskById(id);
 
-const updateTaskByIdAndBoardId = (boardId, id, data) => tasksRepo.updateTaskByIdAndBoardId(boardId, id, data);
+const updateTaskById = (id, data) => tasksRepo.updateTaskById(id, data);
 
 const deleteTask = id => tasksRepo.deleteTask(id);
 
@@ -17,8 +17,8 @@ const clearRemovedUserFromTasks = id => tasksRepo.clearRemovedUserFromTasks(id);
 module.exports = {
     getTasksByBoardId,
     createNewTask,
-    getTaskByIdAndBoardId,
-    updateTaskByIdAndBoardId,
+    getTaskById,
+    updateTaskById,
     deleteTask,
     clearRemovedUserFromTasks,
     deleteTasksByBoardId,
