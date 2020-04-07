@@ -134,3 +134,15 @@ Let's try to create a competitor for Trello!
 
 * To test the service CRUD methods you can use Swagger html (see [README.md](https://github.com/rolling-scopes-school/nodejs-course-template/blob/master/README.md#running-application)).
 * To generate all entities “id”s use [uuid](https://www.npmjs.com/package/uuid) package.
+
+
+## Task 3. Logging & Error Handling
+
+Add logging functionality to already existing REST service.
+
+1. Add express middleware which will log incoming requests to service (url, params, body).
+2. Add express middleware which will log all unhandled errors and return a standard message with HTTP code 500 (Internal Server Error).
+
+3. Add errors handling to `process.on(‘uncaughtException’,...)`.
+4. Add Unhandled promise rejection listener to log error
+5. Logging should be done using just console.log method.
