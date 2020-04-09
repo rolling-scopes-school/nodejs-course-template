@@ -140,7 +140,7 @@ Let's try to create a competitor for Trello!
 
 Add logging functionality to already existing REST service.
 
-1. Add express middleware which will log incoming requests to service (url, params, body).
+1. Add express middleware which will log incoming requests to service (url, query parameters, body).
 2. Add express middleware which will log all unhandled errors and return a standard message with HTTP code 500 (Internal Server Error).
 
 3. Add errors handling to `process.on(‘uncaughtException’,...)`.
