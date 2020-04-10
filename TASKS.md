@@ -145,4 +145,4 @@ Add logging functionality to already existing REST service.
 
 3. Add errors handling to `process.on(‘uncaughtException’,...)`.
 4. Add Unhandled promise rejection listener to log error
-5. Logging should be done using just console.log method.
+5. `console.log` or writing to a file can be used for logging. Any third-party logging library can also be used for this purpose.
