@@ -98,3 +98,34 @@ N.B. `console.error` пишет ошибку в `process.stderr`, большин
 6. каждый коммит после дедлайна минус 10 баллов.
 
 Все тесты `npm run test` должны проходить, если не проходят тесты минус 10 баллов.
+
+**Подсказки:**  
+- _(3 пункт)_ Для проверки, пропишите `throw Error('Oops!')` ВНЕ инициализации express и ПОСЛЕ `process.on('uncaughtException', () => {})`. Например:  
+```
+// Express initialization
+const app = express().use(...);
+
+// Exceptions catcher
+process.on('uncaughtException'...);
+
+// PUT IT HERE
+throw Error('Oops!');
+
+module.exports = app;
+```
+_Как результат_: вывод в консоли отловленной ошибки
+
+- _(4 пункт)_ Для проверки, пропишите `Promise.reject(Error('Oops!'))` ВНЕ инициализации express и ПОСЛЕ `process.on('unhandledRejection', () => {})`:  
+```
+// Express initialization
+const app = express().use(...);
+
+// Exceptions catcher
+process.on('unhandledRejection'...);
+
+// PUT IT HERE
+Promise.reject(Error('Oops!'));
+
+module.exports = app;
+```
+_Как результат_: вывод в консоли отловленной ошибки
