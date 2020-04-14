@@ -31,10 +31,16 @@ For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
 After application running open new terminal and enter:
 
-To test without authorization
+To run all tests without authorization
 
 ```
 npm test
+```
+
+To run only one of all test suites (users, boards or tasks)
+
+```
+npm test <suite name>
 ```
 
 To test with authorization
