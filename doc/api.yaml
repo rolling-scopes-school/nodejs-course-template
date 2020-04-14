@@ -47,7 +47,7 @@ components:
           type: number
         description:
           type: string
-        userId: 
+        userId:
           type: string
   responses:
     UnauthorizedError:
@@ -283,8 +283,6 @@ paths:
               type: object
               title: example
               properties:
-                id:
-                  type: string
                 title:
                   type: string
                   description: The board's name
@@ -399,7 +397,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Task"           
+                $ref: "#/components/schemas/Task"
         400:
           description: Bad request
         401:
@@ -444,9 +442,6 @@ paths:
               type: object
               title: example
               properties:
-                id:
-                  type: string
-                  title: The task's ID
                 title:
                   type: string
                   description: The task's title
@@ -465,7 +460,6 @@ paths:
                   type: string
                   description: Column ID
               required:
-                - id
                 - order
                 - boardId
                 - columnId
@@ -526,6 +520,6 @@ paths:
             application/json:
               schema:
                 type: string
-                description: JWT Token          
+                description: JWT Token
         403:
           description: Incorrect login or password
