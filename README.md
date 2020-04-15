@@ -49,10 +49,10 @@ To run all test with authorization
 npm run test:auth
 ```
 
-To run only one of all test suites with authorization (users, boards or tasks)
+To run only specific test suite with authorization (users, boards or tasks)
 
 ```
-npm test <suite name>:auth
+npm run test:auth <suite name>
 ```
 
 ## Development
