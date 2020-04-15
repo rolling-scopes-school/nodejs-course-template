@@ -52,7 +52,7 @@ npm run test:auth
 To run only one of all test suites with authorization (users, boards or tasks)
 
 ```
-npm test:auth <suite name>
+npm test <suite name>:auth
 ```
 
 ## Development
