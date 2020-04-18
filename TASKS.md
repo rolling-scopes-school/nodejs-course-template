@@ -152,7 +152,7 @@ Add logging functionality to already existing REST service.
 1. Use MongoDB database to store REST service data (Users, Boards, Tasks).
 
 - Follow the [MongoDB Atlas registration link](https://www.mongodb.com/cloud/atlas/register).
-- Feel all mandatory fields and click create account button.
+- Fill all mandatory fields and click create account button.
 - Choose “Starter Cluster” option and click Create a cluster.
 - The next screen choose: cloud provider - AWS, region - Ireland (eu-west-1) and click “Create Cluster” button (Not change another options).
 - Click Security - Database access tab.
