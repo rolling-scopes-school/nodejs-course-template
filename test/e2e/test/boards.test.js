@@ -129,6 +129,11 @@ describe('Boards suite', () => {
       let boardId;
       // Setup
       await request
+        .post(routes.boards.create)
+        .set('Accept', 'application/json')
+        .send(TEST_BOARD_DATA);
+
+      await request
         .get(routes.boards.getAll)
         .set('Accept', 'application/json')
         .expect(200)
