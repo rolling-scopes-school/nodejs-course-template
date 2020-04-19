@@ -141,6 +141,8 @@ describe('Boards suite', () => {
         .post(routes.boards.create)
         .set('Accept', 'application/json')
         .send(TEST_BOARD_DATA)
+        .expect(200)
+        .expect('Content-Type', /json/)
         .then(res => (boardId = res.body.id));
 
       // Test
