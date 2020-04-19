@@ -129,12 +129,11 @@ describe('Boards suite', () => {
       let boardId;
       // Setup
       await request
-        .get(routes.boards.getAll)
+        .post(routes.boards.create)
         .set('Accept', 'application/json')
-        .expect(200)
+        .send(TEST_BOARD_DATA)
         .then(res => {
-          jestExpect(res.body).not.toHaveLength(0);
-          boardId = res.body[0].id;
+          boardId = res.body.id;
         });
 
       // Test
