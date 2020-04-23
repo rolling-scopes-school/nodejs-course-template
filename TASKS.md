@@ -175,7 +175,7 @@ Add logging functionality to already existing REST service.
 ## Task 5. Authentication and JWT
 
 1. `POST /users` should accept **password** field and before save replace it with hash (use [bcrypt package](https://www.npmjs.com/package/bcrypt)).
-2. Add a `POST /login` method which accepts json with login and password and should return **JWT** token (use [jsonwebtoken package](https://www.npmjs.com/package/jsonwebtoken)).
+2. Add a `POST /login` method which accepts json with login and password and should return **JWT** token in response body: `{ token: <jwt_token> }` (use [jsonwebtoken package](https://www.npmjs.com/package/jsonwebtoken)).
 3. JWT token should contain **userId** and **login** in a payload.
 4. Secret that used for signing the token should be stored in `.env` file
 5. For all client requests the JWT token should be added in HTTP **Authorization** header to all requests that requires authentication. HTTP authentication must follow `Bearer` scheme, e.g.:
