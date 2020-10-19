@@ -50,7 +50,6 @@ describe('Boards suite', () => {
 
     it('should get a board by id', async () => {
       // Setup
-      let expectedBoard;
 
       await request
         .get(routes.boards.getAll)
@@ -58,12 +57,12 @@ describe('Boards suite', () => {
         .then(res => {
           jestExpect(Array.isArray(res.body)).toBe(true);
           jestExpect(res.body).not.toHaveLength(0);
-          expectedBoard = res.body[0];
+          jestExpect(res.body.find(e=>e.id===testBoardId)).not.toBe(-1);
         });
 
       // Test
       await request
-        .get(routes.boards.getById(expectedBoard.id))
+        .get(routes.boards.getById(testBoardId))
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
