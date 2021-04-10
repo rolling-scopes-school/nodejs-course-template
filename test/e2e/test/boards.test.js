@@ -58,7 +58,9 @@ describe('Boards suite', () => {
         .then(res => {
           jestExpect(Array.isArray(res.body)).toBe(true);
           jestExpect(res.body).not.toHaveLength(0);
-          jestExpect(res.body.find(e => e.id === testBoardId)).not.toBe(undefined);
+          jestExpect(res.body.find(e => e.id === testBoardId)).not.toBe(
+            undefined
+          );
           expectedBoard = res.body.find(e => e.id === testBoardId);
         });
 
