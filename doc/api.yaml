@@ -104,7 +104,7 @@ paths:
               required:
                 - name
       responses:
-        200:
+        201:
           description: The user has been created.
           content:
             application/json:
@@ -237,7 +237,7 @@ paths:
                 - title
                 - columns
       responses:
-        200:
+        201:
           description: The board has been created.
           content:
             application/json:
@@ -392,7 +392,7 @@ paths:
                 - boardId
                 - columnId
       responses:
-        200:
+        201:
           description: The task has been created.
           content:
             application/json:

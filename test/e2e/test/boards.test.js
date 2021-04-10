@@ -81,7 +81,7 @@ describe('Boards suite', () => {
         .post(routes.boards.create)
         .set('Accept', 'application/json')
         .send(TEST_BOARD_DATA)
-        .expect(200)
+        .expect(201)
         .expect('Content-Type', /json/)
         .then(res => {
           boardId = res.body.id;
@@ -141,7 +141,7 @@ describe('Boards suite', () => {
         .post(routes.boards.create)
         .set('Accept', 'application/json')
         .send(TEST_BOARD_DATA)
-        .expect(200)
+        .expect(201)
         .expect('Content-Type', /json/)
         .then(res => (boardId = res.body.id));
 
@@ -159,7 +159,7 @@ describe('Boards suite', () => {
         .post(routes.boards.create)
         .set('Accept', 'application/json')
         .send(TEST_BOARD_DATA)
-        .expect(200);
+        .expect(201);
       const boardId = res.body.id;
 
       const boardTaskResponses = await Promise.all(
@@ -175,7 +175,7 @@ describe('Boards suite', () => {
               columnId: null
             })
             .set('Accept', 'application/json')
-            .expect(200)
+            .expect(201)
             .expect('Content-Type', /json/)
         )
       );
