@@ -50,7 +50,7 @@ describe('Users suite', () => {
         .post(routes.users.create)
         .set('Accept', 'application/json')
         .send(TEST_USER_DATA)
-        .expect(200)
+        .expect(201)
         .expect('Content-Type', /json/)
         .then(res => {
           expect(res.body.id).to.be.a('string');
@@ -80,7 +80,7 @@ describe('Users suite', () => {
         .post(routes.users.create)
         .set('Accept', 'application/json')
         .send(TEST_USER_DATA)
-        .expect(200)
+        .expect(201)
         .expect('Content-Type', /json/)
         .then(res => {
           expect(res.body.id).to.be.a('string');
@@ -158,7 +158,7 @@ describe('Users suite', () => {
         .post(routes.users.create)
         .send(TEST_USER_DATA)
         .set('Accept', 'application/json')
-        .expect(200)
+        .expect(201)
         .expect('Content-Type', /json/);
       const userId = userResponse.body.id;
 
@@ -166,7 +166,7 @@ describe('Users suite', () => {
         .post(routes.boards.create)
         .send(TEST_BOARD_DATA)
         .set('Accept', 'application/json')
-        .expect(200)
+        .expect(201)
         .expect('Content-Type', /json/);
       const boardId = boardResponse.body.id;
 
@@ -182,7 +182,7 @@ describe('Users suite', () => {
               boardId
             })
             .set('Accept', 'application/json')
-            .expect(200)
+            .expect(201)
             .expect('Content-Type', /json/)
         )
       );

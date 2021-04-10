@@ -98,7 +98,7 @@ describe('Tasks suite', () => {
         .post(routes.tasks.create(testBoardId))
         .set('Accept', 'application/json')
         .send(TEST_TASK_DATA)
-        .expect(200)
+        .expect(201)
         .expect('Content-Type', /json/)
         .then(res => {
           expect(res.body.id).to.be.a('string');
