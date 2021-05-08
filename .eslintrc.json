@@ -15,15 +15,9 @@
   "settings": {
     "noInlineConfig": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:node/recommended",
-    "airbnb-base",
-    "prettier"
-  ],
+  "extends": ["auto"],
   "rules": {
-    "import/extensions": "off",
-    "linebreak-style": "off",
-    "node/no-unsupported-features/es-syntax": "off"
+    "import/no-named-as-default-member": "off",
+    "unicorn/prefer-module": "off"
   }
 }
