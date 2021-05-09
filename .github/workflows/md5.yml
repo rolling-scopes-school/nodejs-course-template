@@ -17,7 +17,7 @@ jobs:
           path: config2021q2
 
       - name: Check workflows checksum
-        run: md5sum --strict --check ./config2021q2/workflows.md5
+        run: md5sum --strict --check config2021q2/workflows.md5
 
-      - name: Check src checksum
-        run: md5sum --strict --check ./config2021q2/tests.md5
+      - name: Check tests checksum
+        run: md5sum --strict --check config2021q2/tests.md5
