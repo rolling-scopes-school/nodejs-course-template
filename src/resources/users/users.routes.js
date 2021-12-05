@@ -8,8 +8,8 @@ const usersRoutes = (fastify, opts, done) => {
     reply.code(200).type('application/json').send(users.map(User.toResponse));
   });
 
-  fastify.get('/users/:id', opts, async (request, reply) => {
-    const user = await usersService.getById(request.params.id);
+  fastify.get('/users/:userId', opts, async (request, reply) => {
+    const user = await usersService.getById(request.params.userId);
     reply.code(200).type('application/json').send(User.toResponse(user));
   });
 
@@ -26,19 +26,19 @@ const usersRoutes = (fastify, opts, done) => {
   );
 
   fastify.put(
-    '/users/:id',
+    '/users/:userId',
     { ...opts, schema: usersSchema },
     async (request, reply) => {
       const user = await usersService.updateById(
-        request.params.id,
+        request.params.userId,
         request.body
       );
       reply.code(200).type('application/json').send(User.toResponse(user));
     }
   );
 
-  fastify.delete('/users/:id', opts, async (request, reply) => {
-    await usersService.deleteById(request.params.id);
+  fastify.delete('/users/:userId', opts, async (request, reply) => {
+    await usersService.deleteById(request.params.userId);
     reply.code(204);
   });
 

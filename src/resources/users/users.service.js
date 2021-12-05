@@ -6,6 +6,7 @@ const {
 } = require('../../common/constants');
 const { HttpError } = require('../../common/error');
 const usersRepository = require('./users.memory.repository');
+const tasksRepository = require('../tasks/tasks.memory.repository');
 
 const getAll = async () => usersRepository.getAll();
 
@@ -62,7 +63,8 @@ const deleteById = async (id) => {
     );
   }
 
-  usersRepository.deleteById(id);
+  await usersRepository.deleteById(id);
+  await tasksRepository.whenUserDeleted(id);
 };
 
 module.exports = {

@@ -8,8 +8,8 @@ const boardsRoutes = (fastify, opts, done) => {
     reply.code(200).type('application/json').send(boards.map(Board.toResponse));
   });
 
-  fastify.get('/boards/:id', opts, async (request, reply) => {
-    const board = await boardsService.getById(request.params.id);
+  fastify.get('/boards/:boardId', opts, async (request, reply) => {
+    const board = await boardsService.getById(request.params.boardId);
     reply.code(200).type('application/json').send(Board.toResponse(board));
   });
 
@@ -17,28 +17,28 @@ const boardsRoutes = (fastify, opts, done) => {
     '/boards',
     { ...opts, schema: { body: boardsSchema } },
     async (request, reply) => {
-      const createBoard = await boardsService.create(request.body);
+      const createdBoard = await boardsService.create(request.body);
       reply
         .code(201)
         .type('application/json')
-        .send(Board.toResponse(createBoard));
+        .send(Board.toResponse(createdBoard));
     }
   );
 
   fastify.put(
-    '/boards/:id',
+    '/boards/:boardId',
     { ...opts, schema: { body: boardsSchema } },
     async (request, reply) => {
       const board = await boardsService.updateById(
-        request.params.id,
+        request.params.boardId,
         request.body
       );
       reply.code(200).type('application/json').send(Board.toResponse(board));
     }
   );
 
-  fastify.delete('/boards/:id', opts, async (request, reply) => {
-    await boardsService.deleteById(request.params.id);
+  fastify.delete('/boards/:boardId', opts, async (request, reply) => {
+    await boardsService.deleteById(request.params.boardId);
     reply.code(204);
   });
 

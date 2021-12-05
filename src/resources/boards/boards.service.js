@@ -2,6 +2,7 @@ const { validate } = require('uuid');
 const { NOT_FOUND_ARGS, BAD_REQUEST_ARGS } = require('../../common/constants');
 const { HttpError } = require('../../common/error');
 const boardsRepository = require('./boards.memory.repository');
+const tasksRepository = require('../tasks/tasks.memory.repository');
 
 const getAll = async () => boardsRepository.getAll();
 
@@ -51,7 +52,8 @@ const deleteById = async (id) => {
     );
   }
 
-  boardsRepository.deleteById(id);
+  await boardsRepository.deleteById(id);
+  await tasksRepository.whenBoardDeleted(id);
 };
 
 module.exports = {
