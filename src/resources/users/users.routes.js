@@ -1,8 +1,8 @@
 const User = require('./users.model');
 const usersService = require('./users.service');
-const userSchema = require('./users.shema');
+const usersSchema = require('./users.schema');
 
-const userRoutes = (fastify, opts, done) => {
+const usersRoutes = (fastify, opts, done) => {
   fastify.get('/users', opts, async (request, reply) => {
     const users = await usersService.getAll();
     reply.code(200).type('application/json').send(users.map(User.toResponse));
@@ -15,7 +15,7 @@ const userRoutes = (fastify, opts, done) => {
 
   fastify.post(
     '/users',
-    { ...opts, schema: userSchema },
+    { ...opts, schema: usersSchema },
     async (request, reply) => {
       const createdUser = await usersService.create(request.body);
       reply
@@ -27,7 +27,7 @@ const userRoutes = (fastify, opts, done) => {
 
   fastify.put(
     '/users/:id',
-    { ...opts, schema: userSchema },
+    { ...opts, schema: usersSchema },
     async (request, reply) => {
       const user = await usersService.updateById(
         request.params.id,
@@ -45,4 +45,4 @@ const userRoutes = (fastify, opts, done) => {
   done();
 };
 
-module.exports = userRoutes;
+module.exports = usersRoutes;

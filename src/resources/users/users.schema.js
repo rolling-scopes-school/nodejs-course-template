@@ -1,4 +1,4 @@
-const userSchema = {
+const usersSchema = {
   body: {
     type: 'object',
     required: ['name', 'login', 'password'],
@@ -20,4 +20,4 @@ const userSchema = {
   },
 };
 
-module.exports = userSchema;
+module.exports = usersSchema;

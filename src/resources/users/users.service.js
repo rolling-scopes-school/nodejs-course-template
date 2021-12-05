@@ -15,7 +15,10 @@ const getById = async (id) => {
   }
   const user = await usersRepository.getById(id);
   if (!user) {
-    throw new HttpError(...NOT_FOUND_ARGS, `The user with ${id} is not found.`);
+    throw new HttpError(
+      ...NOT_FOUND_ARGS,
+      `The user with ${id} (id) is not found.`
+    );
   }
 
   return user;
@@ -38,7 +41,10 @@ const updateById = async (id, data) => {
   }
 
   if (!(await usersRepository.getById(id))) {
-    throw new HttpError(...NOT_FOUND_ARGS, `The user with "id" is not found.`);
+    throw new HttpError(
+      ...NOT_FOUND_ARGS,
+      `The user with ${id} (id) is not found.`
+    );
   }
 
   return usersRepository.updateById(id, data);
@@ -50,7 +56,10 @@ const deleteById = async (id) => {
   }
 
   if (!(await usersRepository.getById(id))) {
-    throw new HttpError(...NOT_FOUND_ARGS, `The user with "id" is not found.`);
+    throw new HttpError(
+      ...NOT_FOUND_ARGS,
+      `The user with ${id} (id) is not found.`
+    );
   }
 
   usersRepository.deleteById(id);
