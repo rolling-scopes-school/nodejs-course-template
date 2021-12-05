@@ -5,5 +5,6 @@ const app = fastify({
 });
 
 app.register(require('./resources/users/users.routes'));
+app.register(require('./resources/boards/boards.routes'));
 
 module.exports = app;
