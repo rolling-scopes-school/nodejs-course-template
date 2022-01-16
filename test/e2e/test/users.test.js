@@ -68,7 +68,8 @@ describe('Users suite', () => {
       expect(userResponse.body.id).to.equal(userId);
 
       // Clean up, delete the user we created
-      await request.delete(routes.users.delete(userId));
+      await request.delete(routes.users.delete(userId))
+          .then(res => expect(res.status).oneOf([200, 204]));
     });
   });
 
@@ -93,7 +94,8 @@ describe('Users suite', () => {
         });
 
       // Teardown
-      await request.delete(routes.users.delete(userId));
+      await request.delete(routes.users.delete(userId))
+          .then(res => expect(res.status).oneOf([200, 204]));
     });
   });
 
@@ -135,7 +137,8 @@ describe('Users suite', () => {
         .then(res => jestExpect(res.body).toMatchObject(expectedUser));
 
       // Teardown
-      await request.delete(routes.users.delete(userId));
+      await request.delete(routes.users.delete(userId))
+          .then(res => expect(res.status).oneOf([200, 204]));
     });
   });
 

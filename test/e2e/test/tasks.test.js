@@ -110,7 +110,8 @@ describe('Tasks suite', () => {
         });
 
       // Teardown
-      await request.delete(routes.tasks.delete(testBoardId, taskId));
+      await request.delete(routes.tasks.delete(testBoardId, taskId))
+          .then(res => expect(res.status).oneOf([200, 204]));
     });
   });
 
