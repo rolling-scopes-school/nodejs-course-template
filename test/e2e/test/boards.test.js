@@ -93,7 +93,8 @@ describe('Boards suite', () => {
         });
 
       // Teardown
-      await request.delete(routes.boards.delete(boardId));
+      await request.delete(routes.boards.delete(boardId))
+          .then(res => expect(res.status).oneOf([200, 204]));
     });
   });
 
@@ -131,7 +132,8 @@ describe('Boards suite', () => {
         .then(res => jestExpect(res.body).toMatchObject(updatedBoard));
 
       // Teardown
-      await request.delete(routes.boards.delete(updatedBoard.id));
+      await request.delete(routes.boards.delete(updatedBoard.id))
+          .then(res => expect(res.status).oneOf([200, 204]));
     });
   });
 
