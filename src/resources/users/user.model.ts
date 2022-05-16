@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { IUser } from './user.interface';
+import { UserInfo } from './user.interface';
 
 export default class User {
   private readonly id: string;
@@ -22,7 +22,7 @@ export default class User {
     this.password = password;
   }
 
-  static toResponse(user: IUser) {
+  static toResponse(user: UserInfo) {
     const { id, name, login } = user;
     return { id, name, login };
   }
