@@ -1,3 +1,3 @@
-import * as usersRepo from './user.memory.repository';
+import { getAll } from './user.memory.repository';
 
-export const getAll = () => usersRepo.getAll();
+export const getAllFromDB = () => getAll();

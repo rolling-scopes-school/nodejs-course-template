@@ -7,12 +7,15 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "target": "ES2020",
-    "lib": ["ES2020"],
+    "allowJs": true,
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./src",
-    "incremental": true
+    "incremental": true,
+    "strict": true,
+    "skipLibCheck": true
   },
   "include": ["src/**/*.ts"]
 }
