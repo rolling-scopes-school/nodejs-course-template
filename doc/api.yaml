@@ -1,0 +1,881 @@
+openapi: 3.0.0
+info:
+  title: Home Library Service
+  description: Home video, music and book library service
+  version: 1.0.0
+
+servers:
+  - url: /api
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        login:
+          type: string
+      required:
+        - id
+        - username
+    Album:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        singer:
+          type: string
+        songs:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+        year:
+          type: integer
+      required:
+        - id
+        - name
+        - singer
+    Track:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        singer:
+          type: string
+        album:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              year:
+                type: integer
+        duration:
+          type: integer
+          description: In seconds
+      required:
+        - id
+        - name
+        - duration
+        - singer
+    Movie:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        genre:
+          type: string
+          enum:
+            [
+              Action,
+              Crime,
+              Fantasy,
+              Horror,
+              Romance,
+              Science Fiction,
+              Comedy,
+              Sports,
+              Thriller,
+              War,
+              Western,
+            ]
+        duration:
+          type: integer
+          description: In seconds
+        year:
+          type: integer
+      required:
+        - id
+        - name
+        - genre
+        - duration
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        author:
+          type: string
+        genre:
+          type: string
+          enum:
+            [
+              Adventure,
+              Classics,
+              Comics,
+              Detective,
+              Mystery,
+              Fantasy,
+              Historical,
+              Horror,
+              Fiction,
+            ]
+        year:
+          type: integer
+      required:
+        - id
+        - name
+        - genre
+    Favourites:
+      type: object
+      properties:
+        movies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Movie'
+        tracks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Track'
+        books:
+          type: array
+          items:
+            $ref: '#/components/schemas/Book'
+  responses:
+    UnauthorizedError:
+      description: Access token is missing or invalid
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+paths:
+  /login:
+    post:
+      tags:
+        - Login
+      security: []
+      summary: Login
+      description: Logins a user and returns a JWT-token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                login:
+                  type: string
+                  description: Username
+                password:
+                  type: string
+                  description: Password
+              required:
+                - user
+                - login
+      responses:
+        200:
+          description: Successful login.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                description: JWT Token
+        403:
+          description: Incorrect login or password
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get all users
+      description: Gets all users
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Users
+      summary: Create user
+      description: Creates a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                login:
+                  type: string
+                  description: The user's login
+                password:
+                  type: string
+                  description: The user's password
+              required:
+                - login
+                - password
+      responses:
+        200:
+          description: The user has been created.
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    put:
+      tags:
+        - Users
+      summary: Update a user's password
+      description: Updates a user's password by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                id:
+                  type: string
+                  description: The user's uuid
+                oldPassword:
+                  type: string
+                  description: The user's old password
+                password:
+                  type: string
+                  description: The user's new password
+              required:
+                - password
+      responses:
+        200:
+          description: The user has been updated.
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /users/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    delete:
+      tags:
+        - Users
+      summary: Delete user
+      description: Deletes user by ID.
+      responses:
+        204:
+          description: The user has been deleted
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: User not found
+  /tracks:
+    get:
+      tags:
+        - Track
+      summary: Get tracks list
+      description: Gets all library tracks list
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Track'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Track
+      summary: Add new track
+      description: Add new track information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                singer:
+                  type: string
+                duration:
+                  type: integer
+                  description: In seconds
+                albums:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    description: albums ids
+              required:
+                - id
+                - name
+                - duration
+                - singer
+      responses:
+        200:
+          description: All library tracks list
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /tracks/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags:
+        - Track
+      summary: Update track information
+      description: Update library track information by UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                name:
+                  type: string
+                singer:
+                  type: string
+                duration:
+                  type: integer
+                  description: In seconds
+                albums:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    description: albums ids
+      responses:
+        200:
+          description: The track has been updated.
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Track was not found.
+    delete:
+      tags:
+        - Track
+      summary: Delete track
+      description: Delete track from library
+      responses:
+        200:
+          description: Added succesfully
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Track was not found.
+  /tracks/{id}/favs:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags:
+        - Favourites
+        - Track
+      summary: Add track to the favourites
+      description: Add track to the favourites
+      responses:
+        200:
+          description: Added succesfully
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Track was not found.
+    delete:
+      tags:
+        - Favourites
+        - Track
+      summary: Delete track from favourites
+      description: Delete track from favourites
+      responses:
+        200:
+          description: Deleted succesfully
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Track was not found.
+  /albums:
+    get:
+      tags:
+        - Album
+      summary: Get albums list
+      description: Gets all library alibums list
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Album'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Album
+      summary: Add new album
+      description: Add new album information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+                singer:
+                  type: string
+                year:
+                  type: integer
+                tracks:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    description: tracks ids
+              required:
+                - id
+                - name
+                - singer
+      responses:
+        200:
+          description: All library tracks list
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /albums/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags:
+        - Album
+      summary: Update album information
+      description: Update library album information by UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                name:
+                  type: string
+                singer:
+                  type: string
+                year:
+                  type: integer
+                tracks:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+                    description: tracks ids
+      responses:
+        200:
+          description: The album has been updated.
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Album was not found.
+    delete:
+      tags:
+        - Album
+      summary: Delete album
+      description: Delete album from library
+      responses:
+        200:
+          description: Deleted succesfully
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Album was not found.
+  /albums/{id}/track/{trackId}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: trackId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags:
+        - Album
+        - Track
+      summary: Add track to the album
+      description: Add track to the album
+      responses:
+        200:
+          description: Added succesfully
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Album or track was not found.
+    delete:
+      tags:
+        - Album
+        - Track
+      summary: Delete track from album
+      description: Delete track from album
+      responses:
+        200:
+          description: Deleted succesfully
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Album or track was not found.
+  /movie:
+    get:
+      tags:
+        - Movie
+      summary: Get movies list
+      description: Gets all library movies list
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Movie'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Movie
+      summary: Add new movie
+      description: Add new movie information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movie'
+      responses:
+        200:
+          description: All library movies list
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /movie/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags:
+        - Movie
+      summary: Update movie information
+      description: Update library movie information by UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                name:
+                  type: string
+                genre:
+                  type: string
+                  enum:
+                    [
+                      Action,
+                      Crime,
+                      Fantasy,
+                      Horror,
+                      Romance,
+                      Science Fiction,
+                      Comedy,
+                      Sports,
+                      Thriller,
+                      War,
+                      Western,
+                    ]
+                duration:
+                  type: integer
+                  description: In seconds
+                year:
+                  type: integer
+      responses:
+        200:
+          description: The movie has been updated.
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Movie was not found.
+    delete:
+      tags:
+        - Movie
+      summary: Delete movie
+      description: Delete movie from library
+      responses:
+        200:
+          description: Deleted succesfully
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Movie was not found.
+  /movie/{id}/favs:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags:
+        - Favourites
+        - Movie
+      summary: Add movie to the favourites
+      description: Add movie to the favourites
+      responses:
+        200:
+          description: Added succesfully
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Movie was not found.
+    delete:
+      tags:
+        - Favourites
+        - Movie
+      summary: Delete movie from favourites
+      description: Delete movie from favourites
+      responses:
+        200:
+          description: Deleted succesfully
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Movie was not found.
+  /book:
+    get:
+      tags:
+        - Book
+      summary: Get books list
+      description: Gets all library books list
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Book'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+    post:
+      tags:
+        - Book
+      summary: Add new book
+      description: Add new book information
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Book'
+      responses:
+        200:
+          description: All library books list
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+  /book/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    put:
+      tags:
+        - Book
+      summary: Update book information
+      description: Update library book information by UUID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                name:
+                  type: string
+                author:
+                  type: string
+                genre:
+                  type: string
+                  enum:
+                    [
+                      Adventure,
+                      Classics,
+                      Comics,
+                      Detective,
+                      Mystery,
+                      Fantasy,
+                      Historical,
+                      Horror,
+                      Fiction,
+                    ]
+                year:
+                  type: integer
+      responses:
+        200:
+          description: The book has been updated.
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Book was not found.
+    delete:
+      tags:
+        - Book
+      summary: Delete book
+      description: Delete book from library
+      responses:
+        200:
+          description: Deleted succesfully
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Book was not found.
+  /book/{id}/favs:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+    post:
+      tags:
+        - Favourites
+        - Book
+      summary: Add book to the favourites
+      description: Add book to the favourites
+      responses:
+        200:
+          description: Added succesfully
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Book was not found.
+    delete:
+      tags:
+        - Favourites
+        - Book
+      summary: Delete book from favourites
+      description: Delete book from favourites
+      responses:
+        200:
+          description: Deleted succesfully
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Book was not found.
+  /favs:
+    get:
+      tags:
+        - Favourites
+      summary: Get all favourites
+      description: Gets all favourites movies, tracks and books
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Favourites'
+        401:
+          $ref: '#/components/responses/UnauthorizedError'

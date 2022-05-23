@@ -1,0 +1,82 @@
+{
+  "name": "rs-rest-service-starter",
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "type": "commonjs",
+  "description": "REST service starter for RS School",
+  "main": "src/server.ts",
+  "scripts": {
+    "start": "ts-node src/server.ts",
+    "lint": "eslint --ext .js,.ts --fix src/",
+    "test": "cross-env DEBUG=rs:* jest --testMatch \"<rootDir>/test/e2e/test/*.test.js\" --noStackTrace --runInBand",
+    "test:auth": "cross-env DEBUG=rs:* TEST_MODE=auth jest --noStackTrace",
+    "build": "tsc -p ."
+  },
+  "keywords": [
+    "rs",
+    "school",
+    "rest",
+    "node",
+    "typescript",
+    "autotest",
+    "starter"
+  ],
+  "license": "ISC",
+  "engines": {
+    "node": ">=16.0.0 <17"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "./test/setup.js"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.ts": [
+      "npm run lint"
+    ]
+  },
+  "dependencies": {
+    "cross-env": "7.0.3",
+    "dotenv": "10.0.0",
+    "express": "4.17.1",
+    "path": "^0.12.7",
+    "swagger-ui-express": "^4.3.0",
+    "uuid": "8.3.2",
+    "yamljs": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^17.0.31",
+    "@types/swagger-ui-express": "^4.1.3",
+    "@types/uuid": "^8.3.4",
+    "@types/yamljs": "^0.2.31",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "chai": "4.3.4",
+    "debug": "4.3.2",
+    "dirty-chai": "2.0.1",
+    "eslint": "8.2.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.25.3",
+    "eslint-plugin-node": "11.1.0",
+    "eslint-plugin-prettier": "4.0.0",
+    "husky": "^4.3.8",
+    "jest": "27.3.1",
+    "lint-staged": "12.0.3",
+    "nodemon": "2.0.15",
+    "prettier": "2.4.1",
+    "supertest": "6.1.6",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
+  }
+}
