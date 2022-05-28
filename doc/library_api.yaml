@@ -356,7 +356,7 @@ paths:
               type: object
               title: example
               properties:
-                id:
+                userId:
                   type: string
                   description: The user's uuid
                 oldPassword:
@@ -365,6 +365,18 @@ paths:
                 password:
                   type: string
                   description: The user's new password
+                username:
+                  type: string
+                  description: user's name
+                age:
+                  type: integer
+                  description: user's age
+                hobbies:
+                  type: array
+                  items:
+                    type: string
+                  example: ['read books', 'travel', 'listen to hard rock']
+                  description: The user's hobbies
               required:
                 - password
       responses:
