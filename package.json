@@ -52,9 +52,7 @@
     "yamljs": "0.3.0"
   },
   "devDependencies": {
-    "chai": "4.3.4",
     "debug": "4.3.2",
-    "dirty-chai": "2.0.1",
     "eslint": "8.2.0",
     "eslint-config-airbnb-base": "15.0.0",
     "eslint-config-prettier": "8.3.0",
