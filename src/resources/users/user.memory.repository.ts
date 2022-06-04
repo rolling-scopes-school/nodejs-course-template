@@ -1,6 +1,3 @@
-const getAll = async () => {
+export const getAll = () =>
   // TODO: mock implementation. should be replaced during task development
-  return [];
-};
-
-module.exports = { getAll };
+  [];
