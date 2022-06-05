@@ -17,9 +17,10 @@ components:
           format: uuid
         login:
           type: string
+      
       required:
         - id
-        - username
+        - login      
     Album:
       type: object
       properties:
@@ -162,13 +163,12 @@ security:
   - bearerAuth: []
 
 paths:
-  /login:
+  /auth/signup:
     post:
       tags:
-        - Login
-      security: []
-      summary: Login
-      description: Logins a user and returns a JWT-token
+        - Signup
+      summary: Create user
+      description: Creates a new user
       requestBody:
         required: true
         content:
@@ -179,7 +179,37 @@ paths:
               properties:
                 login:
                   type: string
-                  description: Username
+                  description: The user's login
+                password:
+                  type: string
+                  description: The user's password               
+              required:
+                - login
+                - password              
+      responses:
+        200:
+          description: The user has been created.
+        400:
+          description: Bad request
+
+  /auth/login:
+    post:
+      tags:
+        - Login
+      security: []
+      summary: Login
+      description: Logins a user and returns a JWT-token(-s) together with user's id and name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+               login:
+                  type: string
+                  description: User login
                 password:
                   type: string
                   description: Password
@@ -193,12 +223,66 @@ paths:
             application/json:
               schema:
                 type: object
+                title: User's brief details and Tokens pair on login example
                 properties:
-                  token:
+                  accessToken:
                     type: string
-                description: JWT Token
+                    format: jwt_token
+                    description: JWT Token
+                  refreshToken:
+                    type: string
+                    format: jwt_token
+                    description: JWT Token
+                  userId:
+                    type: string
+                    format: uuid
+                    description: user's id
+                  login:
+                    type: string
+                    description: user's login
         403:
           description: Incorrect login or password
+
+  /auth/refreshtoken:
+    post:
+      tags:
+        - Refresh Token
+      security: []
+      summary: Refresh Token is used to get new Access Token
+      description: Accepts Refresh Token abd returns new Access Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: Refresh Token example
+              properties:
+                refreshToken:
+                  type: string
+                  format: jwt_token
+                  description: JWT Refresh Token
+              required:
+                - refreshToken
+      responses:
+        200:
+          description: Access resource successfully with new Access Token.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                    format: jwt_token
+                    description: JWT Token
+                  refreshToken:
+                    type: string
+                    format: jwt_token
+                    description: JWT Token
+        403:
+          description: Incorrect  or  inexistent Refresh Token.
+
   /users:
     get:
       tags:
@@ -216,31 +300,26 @@ paths:
                   $ref: '#/components/schemas/User'
         401:
           $ref: '#/components/responses/UnauthorizedError'
-    post:
+
+  /users/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
       tags:
         - Users
-      summary: Create user
-      description: Creates a new user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              title: example
-              properties:
-                login:
-                  type: string
-                  description: The user's login
-                password:
-                  type: string
-                  description: The user's password
-              required:
-                - login
-                - password
+      summary: Get single user by id
+      description: Gets one user by its id
       responses:
         200:
-          description: The user has been created.
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         400:
           description: Bad request
         401:
@@ -248,8 +327,8 @@ paths:
     put:
       tags:
         - Users
-      summary: Update a user's password
-      description: Updates a user's password by ID
+      summary: Update a user's password / other properties
+      description: Updates a user's password / properties by ID
       requestBody:
         required: true
         content:
@@ -258,7 +337,7 @@ paths:
               type: object
               title: example
               properties:
-                id:
+                userId:
                   type: string
                   description: The user's uuid
                 oldPassword:
@@ -267,6 +346,9 @@ paths:
                 password:
                   type: string
                   description: The user's new password
+                login:
+                  type: string
+                  description: user's login              
               required:
                 - password
       responses:
@@ -276,13 +358,7 @@ paths:
           description: Bad request
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /users/{userId}:
-    parameters:
-      - name: userId
-        in: path
-        required: true
-        schema:
-          type: string
+
     delete:
       tags:
         - Users
@@ -298,7 +374,7 @@ paths:
   /tracks:
     get:
       tags:
-        - Track
+        - Tracks
       summary: Get tracks list
       description: Gets all library tracks list
       responses:
@@ -314,7 +390,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Track
+        - Tracks
       summary: Add new track
       description: Add new track information
       requestBody:
@@ -360,9 +436,28 @@ paths:
         schema:
           type: string
           format: uuid
+    get:
+      tags:
+        - Tracks
+      summary: Get track by id
+      description: Get a single track by id
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Track'
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Track was not found.
+
     put:
       tags:
-        - Track
+        - Tracks
       summary: Update track information
       description: Update library track information by UUID
       requestBody:
@@ -397,7 +492,7 @@ paths:
           description: Track was not found.
     delete:
       tags:
-        - Track
+        - Tracks
       summary: Delete track
       description: Delete track from library
       responses:
@@ -418,7 +513,7 @@ paths:
     post:
       tags:
         - Favourites
-        - Track
+        - Tracks
       summary: Add track to the favourites
       description: Add track to the favourites
       responses:
@@ -433,7 +528,7 @@ paths:
     delete:
       tags:
         - Favourites
-        - Track
+        - Tracks
       summary: Delete track from favourites
       description: Delete track from favourites
       responses:
@@ -446,7 +541,7 @@ paths:
   /albums:
     get:
       tags:
-        - Album
+        - Albums
       summary: Get albums list
       description: Gets all library alibums list
       responses:
@@ -462,7 +557,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Album
+        - Albums
       summary: Add new album
       description: Add new album information
       requestBody:
@@ -507,9 +602,27 @@ paths:
         schema:
           type: string
           format: uuid
+    get:
+      tags:
+        - Albums
+      summary: Get one album by id
+      description: Gets library album by its id
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Album'
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Album was not found.
     put:
       tags:
-        - Album
+        - Albums
       summary: Update album information
       description: Update library album information by UUID
       requestBody:
@@ -543,7 +656,7 @@ paths:
           description: Album was not found.
     delete:
       tags:
-        - Album
+        - Albums
       summary: Delete album
       description: Delete album from library
       responses:
@@ -569,8 +682,8 @@ paths:
           format: uuid
     post:
       tags:
-        - Album
-        - Track
+        - Albums
+        - Tracks
       summary: Add track to the album
       description: Add track to the album
       responses:
@@ -584,8 +697,8 @@ paths:
           description: Album or track was not found.
     delete:
       tags:
-        - Album
-        - Track
+        - Albums
+        - Tracks
       summary: Delete track from album
       description: Delete track from album
       responses:
@@ -595,10 +708,10 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album or track was not found.
-  /movie:
+  /movies:
     get:
       tags:
-        - Movie
+        - Movies
       summary: Get movies list
       description: Gets all library movies list
       responses:
@@ -614,7 +727,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Movie
+        - Movies
       summary: Add new movie
       description: Add new movie information
       requestBody:
@@ -630,7 +743,7 @@ paths:
           description: Bad request
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /movie/{id}:
+  /movies/{id}:
     parameters:
       - name: id
         in: path
@@ -638,9 +751,27 @@ paths:
         schema:
           type: string
           format: uuid
+    get:
+      tags:
+        - Movies
+      summary: Get one movie by id
+      description: Gets library movie by its id
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Movie'
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Movie was not found.
     put:
       tags:
-        - Movie
+        - Movies
       summary: Update movie information
       description: Update library movie information by UUID
       requestBody:
@@ -685,7 +816,7 @@ paths:
           description: Movie was not found.
     delete:
       tags:
-        - Movie
+        - Movies
       summary: Delete movie
       description: Delete movie from library
       responses:
@@ -695,7 +826,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Movie was not found.
-  /movie/{id}/favs:
+  /movies/{id}/favs:
     parameters:
       - name: id
         in: path
@@ -706,7 +837,7 @@ paths:
     post:
       tags:
         - Favourites
-        - Movie
+        - Movies
       summary: Add movie to the favourites
       description: Add movie to the favourites
       responses:
@@ -721,7 +852,7 @@ paths:
     delete:
       tags:
         - Favourites
-        - Movie
+        - Movies
       summary: Delete movie from favourites
       description: Delete movie from favourites
       responses:
@@ -731,10 +862,10 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Movie was not found.
-  /book:
+  /books:
     get:
       tags:
-        - Book
+        - Books
       summary: Get books list
       description: Gets all library books list
       responses:
@@ -750,7 +881,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Book
+        - Books
       summary: Add new book
       description: Add new book information
       requestBody:
@@ -766,7 +897,7 @@ paths:
           description: Bad request
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /book/{id}:
+  /books/{id}:
     parameters:
       - name: id
         in: path
@@ -774,9 +905,27 @@ paths:
         schema:
           type: string
           format: uuid
+    get:
+      tags:
+        - Books
+      summary: Get book by id
+      description: Get a single book by id
+      responses:
+        200:
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Book'
+        400:
+          description: Bad request
+        401:
+          $ref: '#/components/responses/UnauthorizedError'
+        404:
+          description: Book was not found.
     put:
       tags:
-        - Book
+        - Books
       summary: Update book information
       description: Update library book information by UUID
       requestBody:
@@ -818,7 +967,7 @@ paths:
           description: Book was not found.
     delete:
       tags:
-        - Book
+        - Books
       summary: Delete book
       description: Delete book from library
       responses:
@@ -828,7 +977,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Book was not found.
-  /book/{id}/favs:
+  /books/{id}/favs:
     parameters:
       - name: id
         in: path
@@ -839,7 +988,7 @@ paths:
     post:
       tags:
         - Favourites
-        - Book
+        - Books
       summary: Add book to the favourites
       description: Add book to the favourites
       responses:
@@ -854,7 +1003,7 @@ paths:
     delete:
       tags:
         - Favourites
-        - Book
+        - Books
       summary: Delete book from favourites
       description: Delete book from favourites
       responses:
