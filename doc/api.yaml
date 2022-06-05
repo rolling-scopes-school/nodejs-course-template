@@ -17,10 +17,10 @@ components:
           format: uuid
         login:
           type: string
-      
+
       required:
         - id
-        - login      
+        - login
     Album:
       type: object
       properties:
@@ -182,10 +182,10 @@ paths:
                   description: The user's login
                 password:
                   type: string
-                  description: The user's password               
+                  description: The user's password
               required:
                 - login
-                - password              
+                - password
       responses:
         200:
           description: The user has been created.
@@ -207,7 +207,7 @@ paths:
               type: object
               title: example
               properties:
-               login:
+                login:
                   type: string
                   description: User login
                 password:
@@ -327,8 +327,8 @@ paths:
     put:
       tags:
         - Users
-      summary: Update a user's password / other properties
-      description: Updates a user's password / properties by ID
+      summary: Update a user's password
+      description: Updates a user's password
       requestBody:
         required: true
         content:
@@ -348,7 +348,7 @@ paths:
                   description: The user's new password
                 login:
                   type: string
-                  description: user's login              
+                  description: user's login
               required:
                 - password
       responses:
