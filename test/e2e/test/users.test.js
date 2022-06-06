@@ -11,14 +11,6 @@ const TEST_USER_DATA = {
   password: 'T35t_P@55w0rd'
 };
 
-const TEST_BOARD_DATA = {
-  title: 'Autotest board',
-  columns: [
-    { title: 'Backlog', order: 1 },
-    { title: 'Sprint', order: 2 }
-  ]
-};
-
 describe('Users suite', () => {
   let request = unauthorizedRequest;
 
@@ -37,8 +29,8 @@ describe('Users suite', () => {
         .expect('Content-Type', /json/);
       debug(usersResponse.body);
 
-      expect(usersResponse.status).to.equal(200);
-      expect(Array.isArray(usersResponse.body)).to.be.true();
+      expect(usersResponse.status).toBe(200);
+      expect(Array.isArray(usersResponse.body)).toBe(true);
     });
 
     it('should get a user by id', async () => {
@@ -53,7 +45,7 @@ describe('Users suite', () => {
         .expect(201)
         .expect('Content-Type', /json/)
         .then(res => {
-          expect(res.body.id).to.be.a('string');
+          expect(typeof res.body.id).toBe('string');
           userId = res.body.id;
         });
 
@@ -64,13 +56,35 @@ describe('Users suite', () => {
         .expect(200)
         .expect('Content-Type', /json/);
 
-      expect(userResponse.body).to.be.instanceOf(Object);
-      expect(userResponse.body.id).to.equal(userId);
+      expect(userResponse.body).toBeInstanceOf(Object);
+      expect(userResponse.body.id).toEqual(userId);
 
       // Clean up, delete the user we created
       await request.delete(routes.users.delete(userId))
-          .then(res => expect(res.status).oneOf([200, 204]));
+        .then(res => expect([200, 204].includes(res.status)).toBe(true)); // to be one of the array expected statuses
     });
+
+    it('should answer with status code 400 and corresponding message if userId is invalid (not uuid)',
+      async () => {
+        const invalidId = '123'
+        await request
+          .get(routes.users.getById(invalidId))
+          .set('Accept', 'application/json')
+          .expect(400)
+      });
+
+    it('should answer with status code 404 and corresponding message if record with id === userId doesn\'t exist',
+      async () => {
+        // Setup:
+        const userId = '2383678d-fa20-4635-af2f-cbc5087bb0af'
+        await request.delete(routes.users.delete(userId));
+
+        // Test:
+        await request
+          .get(routes.users.getById(userId))
+          .set('Accept', 'application/json')
+          .expect(404)
+      });
   });
 
   describe('POST', () => {
@@ -84,10 +98,10 @@ describe('Users suite', () => {
         .expect(201)
         .expect('Content-Type', /json/)
         .then(res => {
-          expect(res.body.id).to.be.a('string');
+          expect( typeof res.body.id).toBe('string');
           userId = res.body.id;
-          expect(res.body).to.not.have.property('password');
-          jestExpect(res.body).toMatchObject({
+          expect(res.body).not.toHaveProperty('password');
+          expect(res.body).toMatchObject({
             login: TEST_USER_DATA.login,
             name: TEST_USER_DATA.name
           });
@@ -95,7 +109,18 @@ describe('Users suite', () => {
 
       // Teardown
       await request.delete(routes.users.delete(userId))
-          .then(res => expect(res.status).oneOf([200, 204]));
+        .then(res => expect([200, 204].includes(res.status)).toBe(true));
+    });
+
+    it('should answer with status code 400 and corresponding message if request body does not contain required fields',
+      async () => {
+      const {name, ...nameLessData} = TEST_USER_DATA
+
+      await request
+        .post(routes.users.create)
+        .set('Accept', 'application/json')
+        .send(nameLessData)
+        .expect(400)
     });
   });
 
@@ -134,12 +159,34 @@ describe('Users suite', () => {
         .set('Accept', 'application/json')
         .expect(200)
         .expect('Content-Type', /json/)
-        .then(res => jestExpect(res.body).toMatchObject(expectedUser));
+        .then(res => expect(res.body).toMatchObject(expectedUser));
 
       // Teardown
       await request.delete(routes.users.delete(userId))
-          .then(res => expect(res.status).oneOf([200, 204]));
+        .then(res => expect([200, 204].includes(res.status)).toBe(true));
     });
+
+    it('should answer with status code 400 and corresponding message if userId is invalid (not uuid)',
+      async () => {
+        const invalidId = '123'
+        await request
+          .put(routes.users.update(invalidId))
+          .set('Accept', 'application/json')
+          .expect(400)
+      });
+
+    it('should answer with status code 404 and corresponding message if record with id === userId doesn\'t exist',
+      async () => {
+        // Setup:
+        const userId = '2383678d-fa20-4635-af2f-cbc5087bb0af'
+        await request.delete(routes.users.delete(userId));
+
+        // Test:
+        await request
+          .put(routes.users.update(userId))
+          .set('Accept', 'application/json')
+          .expect(404)
+      });
   });
 
   describe('DELETE', () => {
@@ -152,71 +199,30 @@ describe('Users suite', () => {
 
       // Test:
       const deleteResponse = await request.delete(routes.users.delete(userId));
-      expect(deleteResponse.status).oneOf([200, 204]);
+      expect([200, 204].includes(deleteResponse.status)).toBe(true);
     });
 
-    it("should unassign user's tasks upon deletion", async () => {
-      // Setup:
-      const userResponse = await request
-        .post(routes.users.create)
-        .send(TEST_USER_DATA)
-        .set('Accept', 'application/json')
-        .expect(201)
-        .expect('Content-Type', /json/);
-      const userId = userResponse.body.id;
-
-      const boardResponse = await request
-        .post(routes.boards.create)
-        .send(TEST_BOARD_DATA)
-        .set('Accept', 'application/json')
-        .expect(201)
-        .expect('Content-Type', /json/);
-      const boardId = boardResponse.body.id;
-
-      const userTaskResponses = await Promise.all(
-        Array.from(Array(2)).map((_, idx) =>
-          request
-            .post(routes.tasks.create(boardId))
-            .send({
-              title: `Task #${idx + 1}`,
-              order: idx + 1,
-              description: 'Lorem ipsum',
-              userId,
-              boardId
-            })
-            .set('Accept', 'application/json')
-            .expect(201)
-            .expect('Content-Type', /json/)
-        )
-      );
-      const userTaskIds = userTaskResponses.map(res => res.body.id);
-
-      // Test:
-      const deleteResponse = await request.delete(routes.users.delete(userId));
-      expect(deleteResponse.status).oneOf([200, 204]);
-
-      for (const taskId of userTaskIds) {
-        const newTaskResponse = await request
-          .get(routes.tasks.getById(boardId, taskId))
+    it('should answer with status code 400 and corresponding message if userId is invalid (not uuid)',
+      async () => {
+        const invalidId = '123'
+        await request
+          .delete(routes.users.delete(invalidId))
           .set('Accept', 'application/json')
-          .expect(200)
-          .expect('Content-Type', /json/);
+          .expect(400)
+      });
 
-        expect(newTaskResponse.body).to.be.instanceOf(Object);
-        expect(newTaskResponse.body.userId).to.equal(null);
-      }
+    it('should answer with status code 404 and corresponding message if record with id === userId doesn\'t exist',
+      async () => {
+        // Setup:
+        const userId = '2383678d-fa20-4635-af2f-cbc5087bb0af'
+        await request.delete(routes.users.delete(userId));
 
-      await Promise.all(
-        userTaskIds.map(async taskId =>
-          request
-            .delete(routes.tasks.getById(boardId, taskId))
-            .then(response => expect(response.status).oneOf([200, 204]))
-        )
-      );
-
-      await request
-        .delete(routes.boards.delete(boardId))
-        .then(res => expect(res.status).oneOf([200, 204]));
-    });
+        // Test:
+        await request
+          .delete(routes.users.delete(userId))
+          .set('Accept', 'application/json')
+          .expect(404)
+      });
   });
+
 });
