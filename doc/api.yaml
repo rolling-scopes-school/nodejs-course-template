@@ -80,7 +80,20 @@ components:
           type: string
         genre:
           type: string
-          enum: [Action, Crime, Fantasy, Horror, Romance, Science Fiction, Comedy, Sports, Thriller, War, Western]
+          enum:
+            [
+                Action,
+                Crime,
+                Fantasy,
+                Horror,
+                Romance,
+                Science Fiction,
+                Comedy,
+                Sports,
+                Thriller,
+                War,
+                Western,
+            ]
         duration:
           type: integer
           description: In seconds
@@ -103,7 +116,18 @@ components:
           type: string
         genre:
           type: string
-          enum: [Adventure, Classics, Comics, Detective, Mystery, Fantasy, Historical, Horror, Fiction]
+          enum:
+            [
+                Adventure,
+                Classics,
+                Comics,
+                Detective,
+                Mystery,
+                Fantasy,
+                Historical,
+                Horror,
+                Fiction,
+            ]
         year:
           type: integer
       required:
@@ -631,7 +655,20 @@ paths:
                   type: string
                 genre:
                   type: string
-                  enum: [Action, Crime, Fantasy, Horror, Romance, Science Fiction, Comedy, Sports, Thriller, War, Western]
+                  enum:
+                    [
+                        Action,
+                        Crime,
+                        Fantasy,
+                        Horror,
+                        Romance,
+                        Science Fiction,
+                        Comedy,
+                        Sports,
+                        Thriller,
+                        War,
+                        Western,
+                    ]
                 duration:
                   type: integer
                   description: In seconds
@@ -756,7 +793,18 @@ paths:
                   type: string
                 genre:
                   type: string
-                  enum: [Adventure, Classics, Comics, Detective, Mystery, Fantasy, Historical, Horror, Fiction]
+                  enum:
+                    [
+                        Adventure,
+                        Classics,
+                        Comics,
+                        Detective,
+                        Mystery,
+                        Fantasy,
+                        Historical,
+                        Horror,
+                        Fiction,
+                    ]
                 year:
                   type: integer
       responses:
