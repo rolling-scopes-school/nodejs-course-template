@@ -283,12 +283,12 @@ paths:
         403:
           description: Incorrect  or  inexistent Refresh Token.
 
-  /users:
+  /user:
     get:
       tags:
         - Users
       summary: Get all users
-      description: Gets all users
+      description: Get all users
       responses:
         200:
           description: Successful operation
@@ -301,7 +301,7 @@ paths:
         401:
           $ref: '#/components/responses/UnauthorizedError'
 
-  /users/{userId}:
+  /user/{userId}:
     parameters:
       - name: userId
         in: path
@@ -312,7 +312,7 @@ paths:
       tags:
         - Users
       summary: Get single user by id
-      description: Gets one user by its id
+      description: Get one user by its id
       responses:
         200:
           description: Successful operation
@@ -371,12 +371,12 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: User not found
-  /tracks:
+  /track:
     get:
       tags:
         - Tracks
       summary: Get tracks list
-      description: Gets all library tracks list
+      description: Get all library tracks list
       responses:
         200:
           description: Successful operation
@@ -428,7 +428,7 @@ paths:
           description: Bad request
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /tracks/{id}:
+  /track/{id}:
     parameters:
       - name: id
         in: path
@@ -502,7 +502,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Track was not found.
-  /tracks/{id}/favs:
+  /favs/track/{id}:
     parameters:
       - name: id
         in: path
@@ -538,12 +538,12 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Track was not found.
-  /albums:
+  /album:
     get:
       tags:
         - Albums
       summary: Get albums list
-      description: Gets all library alibums list
+      description: Get all library alibums list
       responses:
         200:
           description: Successful operation
@@ -594,7 +594,7 @@ paths:
           description: Bad request
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /albums/{id}:
+  /album/{id}:
     parameters:
       - name: id
         in: path
@@ -606,7 +606,7 @@ paths:
       tags:
         - Albums
       summary: Get one album by id
-      description: Gets library album by its id
+      description: Get library album by its id
       responses:
         200:
           description: Successful operation
@@ -666,7 +666,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album was not found.
-  /albums/{id}/track/{trackId}:
+  /album/{id}/track/{trackId}:
     parameters:
       - name: id
         in: path
@@ -708,12 +708,12 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Album or track was not found.
-  /movies:
+  /movie:
     get:
       tags:
         - Movies
       summary: Get movies list
-      description: Gets all library movies list
+      description: Get all library movies list
       responses:
         200:
           description: Successful operation
@@ -743,7 +743,7 @@ paths:
           description: Bad request
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /movies/{id}:
+  /movie/{id}:
     parameters:
       - name: id
         in: path
@@ -755,7 +755,7 @@ paths:
       tags:
         - Movies
       summary: Get one movie by id
-      description: Gets library movie by its id
+      description: Get library movie by its id
       responses:
         200:
           description: Successful operation
@@ -826,7 +826,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Movie was not found.
-  /movies/{id}/favs:
+  /favs/movie/{id}:
     parameters:
       - name: id
         in: path
@@ -862,12 +862,12 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Movie was not found.
-  /books:
+  /book:
     get:
       tags:
         - Books
       summary: Get books list
-      description: Gets all library books list
+      description: Get all library books list
       responses:
         200:
           description: Successful operation
@@ -897,7 +897,7 @@ paths:
           description: Bad request
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /books/{id}:
+  /book/{id}:
     parameters:
       - name: id
         in: path
@@ -977,7 +977,7 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: Book was not found.
-  /books/{id}/favs:
+  /favs/book/{id}:
     parameters:
       - name: id
         in: path
@@ -1018,7 +1018,7 @@ paths:
       tags:
         - Favourites
       summary: Get all favourites
-      description: Gets all favourites movies, tracks and books
+      description: Get all favourites movies, tracks and books
       responses:
         200:
           description: Successful operation
