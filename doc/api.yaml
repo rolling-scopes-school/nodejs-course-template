@@ -28,7 +28,7 @@ components:
           example: 1655720900
       required:
         - id
-        - username
+        - login
     Artist:
       type: object
       properties:
