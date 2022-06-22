@@ -18,7 +18,7 @@ components:
         login:
           type: string
           example: 'TestUser'
-        versioin:
+        version:
           type: number
         createAt:
           type: number
@@ -160,6 +160,41 @@ paths:
                 description: JWT Token
         403:
           description: Incorrect login or password
+  /signup:
+    post:
+      tags:
+        - signup
+      security: [ ]
+      summary: Signup
+      description: Signup a user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              title: example
+              properties:
+                login:
+                  type: string
+                  minLength: 3
+                  maxLength: 255
+                  description: Username
+                password:
+                  type: string
+                  format: password
+                  pattern: ^[a-zA-Z0-9]{3,30}
+                  description: Password
+              required:
+                - login
+                - password
+      responses:
+        204:
+          description: Successful signup
+        400:
+          description: Bad request
+        409:
+          description: Conflict. Login already exists
   /users:
     get:
       tags:
