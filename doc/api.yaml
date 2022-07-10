@@ -89,7 +89,7 @@ components:
         - id
         - name
         - duration
-    Favourites:
+    Favorites:
       type: object
       properties:
         artists:
@@ -743,16 +743,16 @@ paths:
   /favs:
     get:
       tags:
-        - Favourites
-      summary: Get all favourites
-      description: Gets all favourites movies, tracks and books
+        - Favorites
+      summary: Get all favorites
+      description: Gets all favorites movies, tracks and books
       responses:
         200:
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Favourites'
+                $ref: '#/components/schemas/Favorites'
         401:
           $ref: '#/components/responses/UnauthorizedError'
   /favs/track/{id}:
@@ -765,9 +765,9 @@ paths:
           format: uuid
     post:
       tags:
-        - Favourites
-      summary: Add track to the favourites
-      description: Add track to the favourites
+        - Favorites
+      summary: Add track to the favorites
+      description: Add track to the favorites
       responses:
         201:
           description: Added succesfully
@@ -779,9 +779,9 @@ paths:
           description: Track with id doesn't exist.
     delete:
       tags:
-        - Favourites
-      summary: Delete track from favourites
-      description: Delete track from favourites
+        - Favorites
+      summary: Delete track from favorites
+      description: Delete track from favorites
       responses:
         204:
           description: Deleted succesfully
@@ -801,9 +801,9 @@ paths:
           format: uuid
     post:
       tags:
-        - Favourites
-      summary: Add album to the favourites
-      description: Add album to the favourites
+        - Favorites
+      summary: Add album to the favorites
+      description: Add album to the favorites
       responses:
         201:
           description: Added succesfully
@@ -815,9 +815,9 @@ paths:
           description: Album with id doesn't exist.
     delete:
       tags:
-        - Favourites
-      summary: Delete album from favourites
-      description: Delete album from favourites
+        - Favorites
+      summary: Delete album from favorites
+      description: Delete album from favorites
       responses:
         204:
           description: Deleted succesfully
@@ -837,9 +837,9 @@ paths:
           format: uuid
     post:
       tags:
-        - Favourites
-      summary: Add artist to the favourites
-      description: Add artist to the favourites
+        - Favorites
+      summary: Add artist to the favorites
+      description: Add artist to the favorites
       responses:
         201:
           description: Added succesfully
@@ -851,9 +851,9 @@ paths:
           description: Artist with id doesn't exist.
     delete:
       tags:
-        - Favourites
-      summary: Delete artist from favourites
-      description: Delete artist from favourites
+        - Favorites
+      summary: Delete artist from favorites
+      description: Delete artist from favorites
       responses:
         204:
           description: Deleted succesfully

@@ -1,82 +1,83 @@
 {
-  "name": "rs-rest-service-starter",
-  "version": "1.0.0",
-  "repository": {
-    "type": "git",
-    "url": ""
-  },
-  "type": "commonjs",
-  "description": "REST service starter for RS School",
-  "main": "src/server.ts",
+  "name": "home-library",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
   "scripts": {
-    "start": "ts-node src/server.ts",
-    "lint": "eslint --ext .js,.ts --fix src/",
-    "test": "cross-env DEBUG=rs:* jest --testMatch \"<rootDir>/test/e2e/test/*.test.js\" --noStackTrace --runInBand",
-    "test:auth": "cross-env DEBUG=rs:* TEST_MODE=auth jest --noStackTrace",
-    "build": "tsc -p ."
-  },
-  "keywords": [
-    "rs",
-    "school",
-    "rest",
-    "node",
-    "typescript",
-    "autotest",
-    "starter"
-  ],
-  "license": "ISC",
-  "engines": {
-    "node": ">=16.0.0 <17"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "setupFilesAfterEnv": [
-      "./test/setup.js"
-    ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "src/**/*.ts": [
-      "npm run lint"
-    ]
+    "prebuild": "rimraf dist",
+    "build": "nest build",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "start:debug": "nest start --debug --watch",
+    "start:prod": "node dist/main",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "test": "jest --config ./test/jest-e2e.json",
+    "test:auth": "cross-env TEST_MODE=auth jest --config ./test/jest-e2e.json",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
-    "cross-env": "7.0.3",
-    "dotenv": "10.0.0",
-    "express": "4.17.1",
-    "path": "^0.12.7",
-    "swagger-ui-express": "^4.3.0",
-    "uuid": "8.3.2",
-    "yamljs": "^0.3.0"
+    "@nestjs/common": "^8.0.0",
+    "@nestjs/core": "^8.0.0",
+    "@nestjs/jwt": "^9.0.0",
+    "@nestjs/mapped-types": "^1.0.1",
+    "@nestjs/platform-express": "^8.0.0",
+    "bcrypt": "^5.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.13.2",
+    "dotenv": "^16.0.1",
+    "http-status-codes": "^2.2.0",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^3.0.2",
+    "rxjs": "^7.2.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@nestjs/cli": "^8.0.0",
+    "@nestjs/schematics": "^8.0.0",
+    "@nestjs/testing": "^8.0.0",
+    "@types/bcrypt": "^5.0.0",
     "@types/express": "^4.17.13",
-    "@types/node": "^17.0.31",
-    "@types/swagger-ui-express": "^4.1.3",
+    "@types/jest": "27.4.1",
+    "@types/jsonwebtoken": "^8.5.8",
+    "@types/node": "^16.0.0",
+    "@types/supertest": "^2.0.11",
     "@types/uuid": "^8.3.4",
-    "@types/yamljs": "^0.2.31",
-    "@typescript-eslint/eslint-plugin": "^5.23.0",
-    "@typescript-eslint/parser": "^5.23.0",
-    "chai": "4.3.4",
-    "debug": "4.3.2",
-    "dirty-chai": "2.0.1",
-    "eslint": "8.2.0",
-    "eslint-config-airbnb-typescript": "^17.0.0",
-    "eslint-config-prettier": "8.3.0",
-    "eslint-plugin-import": "2.25.3",
-    "eslint-plugin-node": "11.1.0",
-    "eslint-plugin-prettier": "4.0.0",
-    "husky": "^4.3.8",
-    "jest": "27.3.1",
-    "lint-staged": "12.0.3",
-    "nodemon": "2.0.15",
-    "prettier": "2.4.1",
-    "supertest": "6.1.6",
-    "ts-node": "^10.7.0",
-    "typescript": "^4.6.4"
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.2.5",
+    "prettier": "^2.3.2",
+    "source-map-support": "^0.5.20",
+    "supertest": "^6.2.3",
+    "ts-jest": "^27.0.3",
+    "ts-loader": "^9.2.3",
+    "ts-node": "^10.0.0",
+    "tsconfig-paths": "^3.10.1",
+    "typescript": "^4.3.5"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node"
   }
 }

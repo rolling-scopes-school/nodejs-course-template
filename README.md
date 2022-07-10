@@ -1,4 +1,4 @@
-# RS School REST service
+# Home Library Service
 
 ## Prerequisites
 
@@ -34,13 +34,13 @@ After application running open new terminal and enter:
 To run all tests without authorization
 
 ```
-npm test
+npm run test
 ```
 
-To run only one of all test suites (users, boards or tasks)
+To run only one of all test suites
 
 ```
-npm test <suite name>
+npm run test -- <path to suite>
 ```
 
 To run all test with authorization
@@ -49,20 +49,20 @@ To run all test with authorization
 npm run test:auth
 ```
 
-To run only specific test suite with authorization (users, boards or tasks)
+To run only specific test suite with authorization
 
 ```
-npm run test:auth <suite name>
+npm run test:auth -- <path to suite>
 ```
-
-## Development
-
-If you're using VSCode, you can get a better developer experience from integration with [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extensions.
 
 ### Auto-fix and format
 
 ```
 npm run lint
+```
+
+```
+npm run format
 ```
 
 ### Debugging in VSCode
