@@ -162,7 +162,7 @@ describe('artist (e2e)', () => {
       const { id: updatedId, name, grammy } = updateResponse.body;
 
       expect(name).toBe(createArtistDto.name);
-      expect(grammy).toBe(createArtistDto.grammy);
+      expect(grammy).toBe(false);
       expect(validate(updatedId)).toBe(true);
       expect(createdId).toBe(updatedId);
 
