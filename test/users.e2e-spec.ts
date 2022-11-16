@@ -66,11 +66,11 @@ describe('Users (e2e)', () => {
       expect(searchResponse.statusCode).toBe(StatusCodes.OK);
       expect(searchResponse.body).toBeInstanceOf(Object);
 
-      const cleaunpResponse = await unauthorizedRequest
+      const cleanupResponse = await unauthorizedRequest
         .delete(usersRoutes.delete(id))
         .set(commonHeaders);
 
-      expect(cleaunpResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
+      expect(cleanupResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
     });
 
     it('should respond with BAD_REQUEST status code in case of invalid id', async () => {
@@ -109,11 +109,11 @@ describe('Users (e2e)', () => {
       expect(typeof updatedAt).toBe('number');
       expect(createdAt === updatedAt).toBe(true);
 
-      const cleaunpResponse = await unauthorizedRequest
+      const cleanupResponse = await unauthorizedRequest
         .delete(usersRoutes.delete(id))
         .set(commonHeaders);
 
-      expect(cleaunpResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
+      expect(cleanupResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
     });
 
     it('should respond with BAD_REQUEST in case of invalid required data', async () => {
@@ -192,11 +192,11 @@ describe('Users (e2e)', () => {
 
       expect(updateResponse2.statusCode).toBe(StatusCodes.FORBIDDEN);
 
-      const cleaunpResponse = await unauthorizedRequest
+      const cleanupResponse = await unauthorizedRequest
         .delete(usersRoutes.delete(createdId))
         .set(commonHeaders);
 
-      expect(cleaunpResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
+      expect(cleanupResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
     });
 
     it('should respond with BAD_REQUEST status code in case of invalid id', async () => {
@@ -244,11 +244,11 @@ describe('Users (e2e)', () => {
 
       expect(response.status).toBe(StatusCodes.CREATED);
 
-      const cleaunpResponse = await unauthorizedRequest
+      const cleanupResponse = await unauthorizedRequest
         .delete(usersRoutes.delete(id))
         .set(commonHeaders);
 
-      expect(cleaunpResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
+      expect(cleanupResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
       const searchResponse = await unauthorizedRequest
         .get(usersRoutes.getById(id))
         .set(commonHeaders);
