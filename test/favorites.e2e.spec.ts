@@ -75,7 +75,7 @@ describe('Favorites (e2e)', () => {
   });
 
   describe('GET (advanced)', () => {
-    it('should correctly get all favorites entitities', async () => {
+    it('should correctly get all favorites entities', async () => {
       const createArtistResponse = await unauthorizedRequest
         .post(artistsRoutes.create)
         .set(commonHeaders)

@@ -249,6 +249,7 @@ describe('Users (e2e)', () => {
         .set(commonHeaders);
 
       expect(cleanupResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
+
       const searchResponse = await unauthorizedRequest
         .get(usersRoutes.getById(id))
         .set(commonHeaders);
