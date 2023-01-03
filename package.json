@@ -37,7 +37,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@nestjs/cli": "^8.0.0",
+    "@nestjs/cli": "^8.2.8",
     "@nestjs/schematics": "^8.0.0",
     "@nestjs/testing": "^8.0.0",
     "@types/bcrypt": "^5.0.0",
@@ -60,7 +60,7 @@
     "ts-jest": "^27.0.3",
     "ts-loader": "^9.2.3",
     "ts-node": "^10.0.0",
-    "tsconfig-paths": "^3.10.1",
+    "tsconfig-paths": "^3.14.1",
     "typescript": "^4.3.5"
   },
   "jest": {
