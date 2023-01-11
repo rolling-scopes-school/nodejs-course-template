@@ -28,7 +28,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "bcrypt": "^5.0.1",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.13.2",
+    "class-validator": "^0.14.0",
     "dotenv": "^16.0.1",
     "http-status-codes": "^2.2.0",
     "reflect-metadata": "^0.1.13",
