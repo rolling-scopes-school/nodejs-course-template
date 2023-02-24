@@ -6,7 +6,7 @@ import {
   shouldAuthorizationBeTested,
   removeTokenUser,
 } from './utils';
-import { artistsRoutes, albumsRoutes, tracksRoutes } from './endpoints';
+import { artistsRoutes, tracksRoutes } from './endpoints';
 
 const createArtistDto = {
   name: 'TEST_artist',
@@ -134,7 +134,7 @@ describe('artist (e2e)', () => {
         responses.every(
           ({ statusCode }) => statusCode === StatusCodes.BAD_REQUEST,
         ),
-      );
+      ).toBe(true);
     });
   });
 

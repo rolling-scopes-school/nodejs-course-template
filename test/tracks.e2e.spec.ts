@@ -138,7 +138,7 @@ describe('Tracks (e2e)', () => {
         responses.every(
           ({ statusCode }) => statusCode === StatusCodes.BAD_REQUEST,
         ),
-      );
+      ).toBe(true);
     });
   });
 
