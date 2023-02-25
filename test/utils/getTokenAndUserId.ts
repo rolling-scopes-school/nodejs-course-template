@@ -1,7 +1,7 @@
 import { authRoutes } from '../endpoints';
 
 const createUserDto = {
-  login: 'TEST_LOGIN',
+  login: 'TEST_AUTH_LOGIN',
   password: 'Tu6!@#%&',
 };
 
