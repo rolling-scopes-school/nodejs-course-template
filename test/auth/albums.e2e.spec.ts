@@ -1,5 +1,6 @@
 import { request } from '../lib';
 import { albumsRoutes } from '../endpoints';
+import { StatusCodes } from 'http-status-codes';
 
 const createAlbumDto = {
   name: 'TEST_ALBUM',
@@ -14,29 +15,31 @@ describe('Album (e2e)', () => {
   const commonHeaders = { Accept: 'application/json' };
 
   describe('GET all albums', () => {
-    it('should get 401 without token presented', async () => {
-      await request.get(albumsRoutes.getAll).expect(401);
+    it('should get UNAUTHORIZED without token presented', async () => {
+      await request.get(albumsRoutes.getAll).expect(StatusCodes.UNAUTHORIZED);
     });
   });
 
   describe('GET album by id', () => {
-    it('should get 401 without token presented', async () => {
-      await request.get(albumsRoutes.getById(randomUUID)).expect(401);
+    it('should get UNAUTHORIZED without token presented', async () => {
+      await request
+        .get(albumsRoutes.getById(randomUUID))
+        .expect(StatusCodes.UNAUTHORIZED);
     });
   });
 
   describe('POST', () => {
-    it('should get 401 without token presented', async () => {
+    it('should get UNAUTHORIZED without token presented', async () => {
       await request
         .post(albumsRoutes.create)
         .set(commonHeaders)
         .send(createAlbumDto)
-        .expect(401);
+        .expect(StatusCodes.UNAUTHORIZED);
     });
   });
 
   describe('PUT', () => {
-    it('should get 401 without token presented', async () => {
+    it('should get UNAUTHORIZED without token presented', async () => {
       const updatedYear = 2021;
 
       await request
@@ -47,16 +50,16 @@ describe('Album (e2e)', () => {
           year: updatedYear,
           artistId: randomUUID,
         })
-        .expect(401);
+        .expect(StatusCodes.UNAUTHORIZED);
     });
   });
 
   describe('DELETE', () => {
-    it('should get 401 without token presented', async () => {
+    it('should get UNAUTHORIZED without token presented', async () => {
       await request
         .delete(albumsRoutes.delete(randomUUID))
         .set(commonHeaders)
-        .expect(401);
+        .expect(StatusCodes.UNAUTHORIZED);
     });
   });
 });
