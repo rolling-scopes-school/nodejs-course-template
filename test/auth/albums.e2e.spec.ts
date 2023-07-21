@@ -7,6 +7,9 @@ const createAlbumDto = {
   artistId: null,
 };
 
+// Probability of collisions for UUID is almost zero
+const randomUUID = '0a35dd62-e09f-444b-a628-f4e7c6954f57';
+
 describe('Album (e2e)', () => {
   const commonHeaders = { Accept: 'application/json' };
 
@@ -18,9 +21,7 @@ describe('Album (e2e)', () => {
 
   describe('GET album by id', () => {
     it('should get 401 without token presented', async () => {
-      await request
-        .get(albumsRoutes.getById('89a93f1c-2c4a-43c9-a81a-1af71bd507a5'))
-        .expect(401);
+      await request.get(albumsRoutes.getById(randomUUID)).expect(401);
     });
   });
 
@@ -39,12 +40,12 @@ describe('Album (e2e)', () => {
       const updatedYear = 2021;
 
       await request
-        .put(albumsRoutes.update('f15bc21e-a4b3-4056-919b-a108e4b9a818'))
+        .put(albumsRoutes.update(randomUUID))
         .set(commonHeaders)
         .send({
           name: createAlbumDto.name,
           year: updatedYear,
-          artistId: '6d8a8334-0e28-462e-b635-65accbe83da0',
+          artistId: randomUUID,
         })
         .expect(401);
     });
@@ -53,7 +54,7 @@ describe('Album (e2e)', () => {
   describe('DELETE', () => {
     it('should get 401 without token presented', async () => {
       await request
-        .delete(albumsRoutes.delete('a81d8e0c-907b-447c-bf9c-d1e3dd55e514'))
+        .delete(albumsRoutes.delete(randomUUID))
         .set(commonHeaders)
         .expect(401);
     });
