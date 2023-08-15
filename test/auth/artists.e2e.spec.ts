@@ -55,7 +55,10 @@ describe('artist (e2e)', () => {
 
   describe('DELETE', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
-      await request.delete(artistsRoutes.delete(randomUUID)).set(commonHeaders);
+      await request
+        .delete(artistsRoutes.delete(randomUUID))
+        .set(commonHeaders)
+        .expect(StatusCodes.UNAUTHORIZED);
     });
   });
 });
