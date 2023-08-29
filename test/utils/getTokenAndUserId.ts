@@ -16,7 +16,7 @@ const getTokenAndUserId = async (request) => {
 
   // get token
   const {
-    body: { accessToken },
+    body: { accessToken, refreshToken },
   } = await request
     .post(authRoutes.login)
     .set('Accept', 'application/json')
@@ -28,7 +28,13 @@ const getTokenAndUserId = async (request) => {
 
   const token = `Bearer ${accessToken}`;
 
-  return { token, mockUserId };
+  return {
+    token,
+    accessToken,
+    refreshToken,
+    mockUserId,
+    login: createUserDto.login,
+  };
 };
 
 export default getTokenAndUserId;
