@@ -153,7 +153,7 @@ describe('Tracks (e2e)', () => {
 
       expect(creationResponse.status).toBe(StatusCodes.CREATED);
 
-      const updateResponse = await unauthorizedRequest
+      const { statusCode } = await unauthorizedRequest
         .put(tracksRoutes.update(createdId))
         .set(commonHeaders)
         .send({
@@ -163,7 +163,11 @@ describe('Tracks (e2e)', () => {
           albumId: createTrackDto.albumId,
         });
 
-      expect(updateResponse.statusCode).toBe(StatusCodes.OK);
+      expect(statusCode).toBe(StatusCodes.OK);
+
+      const updatedTrackResponse = await unauthorizedRequest
+        .get(tracksRoutes.getById(createdId))
+        .set(commonHeaders);
 
       const {
         id: updatedId,
@@ -171,7 +175,7 @@ describe('Tracks (e2e)', () => {
         duration,
         artistId,
         albumId,
-      } = updateResponse.body;
+      } = updatedTrackResponse.body;
 
       expect(name).toBe(createTrackDto.name);
       expect(artistId).toBe(createTrackDto.artistId);
