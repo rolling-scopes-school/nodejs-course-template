@@ -167,7 +167,7 @@ describe('Album (e2e)', () => {
       const { id: updateArtistId } = creationArtistResponse.body;
       // Preparation end
 
-      const updateResponse = await unauthorizedRequest
+      const { statusCode } = await unauthorizedRequest
         .put(albumsRoutes.update(createdId))
         .set(commonHeaders)
         .send({
@@ -176,9 +176,13 @@ describe('Album (e2e)', () => {
           artistId: updateArtistId,
         });
 
-      expect(updateResponse.statusCode).toBe(StatusCodes.OK);
+      expect(statusCode).toBe(StatusCodes.OK);
 
-      const { id: updatedId, name, year, artistId } = updateResponse.body;
+      const updatedAlbumResponse = await unauthorizedRequest
+        .get(albumsRoutes.getById(createdId))
+        .set(commonHeaders);
+
+      const { id: updatedId, name, year, artistId } = updatedAlbumResponse.body;
 
       expect(name).toBe(createAlbumDto.name);
       expect(year).toBe(updatedYear);
