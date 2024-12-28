@@ -149,7 +149,7 @@ describe('artist (e2e)', () => {
 
       expect(creationResponse.status).toBe(StatusCodes.CREATED);
 
-      const updateResponse = await unauthorizedRequest
+      const { statusCode } = await unauthorizedRequest
         .put(artistsRoutes.update(createdId))
         .set(commonHeaders)
         .send({
@@ -157,9 +157,13 @@ describe('artist (e2e)', () => {
           grammy: false,
         });
 
-      expect(updateResponse.statusCode).toBe(StatusCodes.OK);
+      expect(statusCode).toBe(StatusCodes.OK);
 
-      const { id: updatedId, name, grammy } = updateResponse.body;
+      const updatedArtistResponse = await unauthorizedRequest
+        .get(artistsRoutes.getById(createdId))
+        .set(commonHeaders);
+
+      const { id: updatedId, name, grammy } = updatedArtistResponse.body;
 
       expect(name).toBe(createArtistDto.name);
       expect(grammy).toBe(false);

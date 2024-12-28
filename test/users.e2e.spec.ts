@@ -165,13 +165,17 @@ describe('Users (e2e)', () => {
 
       expect(updateResponse.statusCode).toBe(StatusCodes.OK);
 
+      const updatedUserResponse = await unauthorizedRequest
+        .get(usersRoutes.getById(createdId))
+        .set(commonHeaders);
+
       const {
         id: updatedId,
         version,
         login,
         createdAt,
         updatedAt,
-      } = updateResponse.body;
+      } = updatedUserResponse.body;
 
       expect(login).toBe(createUserDto.login);
       expect(updateResponse.body).not.toHaveProperty('password');
