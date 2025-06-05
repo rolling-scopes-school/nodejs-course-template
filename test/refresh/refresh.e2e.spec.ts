@@ -69,8 +69,8 @@ describe('Refresh (e2e)', () => {
     it('should correctly get new tokens pair', async () => {
       const response = await request
         .post(authRoutes.refresh)
-        .send({ refreshToken: userTokens.refreshToken })
-        .set(headers);
+        .set(headers),
+        .send({ refreshToken: userTokens.refreshToken });
 
       expect(response.statusCode).toBe(HttpStatus.OK);
       expect(response.body).toBeInstanceOf(Object);
@@ -91,8 +91,8 @@ describe('Refresh (e2e)', () => {
       const invalidRefreshToken = Math.random().toString();
       const response = await request
         .post(authRoutes.refresh)
-        .send({ refreshToken: invalidRefreshToken })
-        .set(headers);
+        .set(headers)
+        .send({ refreshToken: invalidRefreshToken });
 
       expect(response.statusCode).toBe(HttpStatus.FORBIDDEN);
     });
@@ -110,8 +110,8 @@ describe('Refresh (e2e)', () => {
       const refreshToken = generateRefreshToken(payload, { expiresIn: '0s' });
       const response = await request
         .post(authRoutes.refresh)
-        .send({ refreshToken })
-        .set(headers);
+        .set(headers)
+        .send({ refreshToken });
 
       expect(response.statusCode).toBe(HttpStatus.FORBIDDEN);
     });
