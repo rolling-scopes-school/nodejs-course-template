@@ -29,7 +29,7 @@ interface TokenPayload extends JwtPayload {
 
 describe('Refresh (e2e)', () => {
   let userTokens: UserTokens;
-  const headers = { Accept: 'application/json' };
+  const commonHeaders = { Accept: 'application/json' };
 
   const verifyToken = async (token: string): Promise<TokenPayload> => {
     const payload = decode(token, { json: true });
@@ -51,17 +51,15 @@ describe('Refresh (e2e)', () => {
 
   beforeAll(async () => {
     if (shouldAuthorizationBeTested) {
-      const { accessToken, refreshToken, mockUserId, login, token } =
+      const { accessToken, refreshToken, mockUserId, login } =
         await getTokenAndUserId(request);
       userTokens = { userId: mockUserId, login, accessToken, refreshToken };
-      headers['Authorization'] = token;
     }
   });
 
   afterAll(async () => {
     if (userTokens) {
-      removeTokenUser(request, userTokens.userId, headers);
-      delete headers['Authorization'];
+      removeTokenUser(request, userTokens.userId, commonHeaders);
     }
   });
 
