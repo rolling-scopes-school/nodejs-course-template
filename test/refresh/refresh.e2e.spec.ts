@@ -25,6 +25,7 @@ type RefreshResponse = {
 interface TokenPayload extends JwtPayload {
   userId: string;
   login: string;
+  role: string;
 }
 
 describe('Refresh (e2e)', () => {
@@ -36,13 +37,16 @@ describe('Refresh (e2e)', () => {
     if (!payload) {
       throw new Error('Token is not valid!');
     }
-    const { userId, login, exp } = payload as TokenPayload;
+    const { userId, login, role, exp } = payload as TokenPayload;
     expect(payload).toBeInstanceOf(Object);
     expect(login).toBeDefined();
     expect(typeof login).toBe('string');
     expect(userId).toBeDefined();
     expect(typeof userId).toBe('string');
     expect(validate(userId)).toBeTruthy();
+    expect(role).toBeDefined();
+    expect(typeof role).toBe('string');
+    expect(['admin', 'editor', 'viewer']).toContain(role);
     expect(exp).toBeDefined();
     expect(typeof exp).toBe('number');
     expect(exp).toBeGreaterThan(0);
@@ -104,6 +108,7 @@ describe('Refresh (e2e)', () => {
       const payload: TokenPayload = {
         userId: userTokens.userId,
         login: userTokens.login,
+        role: 'viewer',
       };
       const refreshToken = generateRefreshToken(payload, { expiresIn: '0s' });
       const response = await request

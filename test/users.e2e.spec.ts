@@ -6,7 +6,11 @@ import {
   shouldAuthorizationBeTested,
   removeTokenUser,
 } from './utils';
-import { usersRoutes } from './endpoints';
+import {
+  usersRoutes,
+  articlesRoutes,
+  commentsRoutes,
+} from './endpoints';
 
 const createUserDto = {
   login: 'TEST_LOGIN',
@@ -97,14 +101,14 @@ describe('Users (e2e)', () => {
         .set(commonHeaders)
         .send(createUserDto);
 
-      const { id, version, login, createdAt, updatedAt } = response.body;
+      const { id, role, login, createdAt, updatedAt } = response.body;
 
       expect(response.status).toBe(StatusCodes.CREATED);
 
       expect(login).toBe(createUserDto.login);
       expect(response.body).not.toHaveProperty('password');
       expect(validate(id)).toBe(true);
-      expect(version).toBe(1);
+      expect(role).toBe('viewer');
       expect(typeof createdAt).toBe('number');
       expect(typeof updatedAt).toBe('number');
       expect(createdAt === updatedAt).toBe(true);
@@ -151,7 +155,8 @@ describe('Users (e2e)', () => {
         .set(commonHeaders)
         .send(createUserDto);
 
-      const { id: createdId } = creationResponse.body;
+      const { id: createdId, createdAt: initialCreatedAt } =
+        creationResponse.body;
 
       expect(creationResponse.status).toBe(StatusCodes.CREATED);
 
@@ -171,7 +176,6 @@ describe('Users (e2e)', () => {
 
       const {
         id: updatedId,
-        version,
         login,
         createdAt,
         updatedAt,
@@ -181,10 +185,10 @@ describe('Users (e2e)', () => {
       expect(updateResponse.body).not.toHaveProperty('password');
       expect(validate(updatedId)).toBe(true);
       expect(createdId).toBe(updatedId);
-      expect(version).toBe(2);
       expect(typeof createdAt).toBe('number');
       expect(typeof updatedAt).toBe('number');
-      expect(createdAt === updatedAt).toBe(false);
+      expect(createdAt).toBe(initialCreatedAt);
+      expect(updatedAt).toBeGreaterThan(createdAt);
 
       const updateResponse2 = await unauthorizedRequest
         .put(usersRoutes.update(createdId))
@@ -275,6 +279,78 @@ describe('Users (e2e)', () => {
         .set(commonHeaders);
 
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
+    });
+
+    it('should set article.authorId to null and delete user comments after deletion', async () => {
+      const createResponse = await unauthorizedRequest
+        .post(usersRoutes.create)
+        .set(commonHeaders)
+        .send(createUserDto);
+
+      const { id: userId } = createResponse.body;
+      expect(createResponse.status).toBe(StatusCodes.CREATED);
+
+      // Create article authored by this user
+      const createArticleDto = {
+        title: 'TEST_ARTICLE',
+        content: 'Test content',
+        status: 'draft',
+        authorId: userId,
+        categoryId: null,
+        tags: [],
+      };
+
+      const createArticleResponse = await unauthorizedRequest
+        .post(articlesRoutes.create)
+        .set(commonHeaders)
+        .send(createArticleDto);
+
+      const { id: articleId } = createArticleResponse.body;
+      expect(createArticleResponse.status).toBe(StatusCodes.CREATED);
+
+      // Create comment by this user
+      const createCommentDto = {
+        content: 'Test comment',
+        articleId,
+        authorId: userId,
+      };
+
+      const createCommentResponse = await unauthorizedRequest
+        .post(commentsRoutes.create)
+        .set(commonHeaders)
+        .send(createCommentDto);
+
+      const { id: commentId } = createCommentResponse.body;
+      expect(createCommentResponse.status).toBe(StatusCodes.CREATED);
+
+      // Delete user
+      const deleteResponse = await unauthorizedRequest
+        .delete(usersRoutes.delete(userId))
+        .set(commonHeaders);
+
+      expect(deleteResponse.statusCode).toBe(StatusCodes.NO_CONTENT);
+
+      // Verify article.authorId is null
+      const searchArticleResponse = await unauthorizedRequest
+        .get(articlesRoutes.getById(articleId))
+        .set(commonHeaders);
+
+      expect(searchArticleResponse.statusCode).toBe(StatusCodes.OK);
+      expect(searchArticleResponse.body.authorId).toBeNull();
+
+      // Verify comment is deleted
+      const searchCommentResponse = await unauthorizedRequest
+        .get(commentsRoutes.getById(commentId))
+        .set(commonHeaders);
+
+      expect(searchCommentResponse.statusCode).toBe(StatusCodes.NOT_FOUND);
+
+      // Cleanup article
+      const cleanupArticle = await unauthorizedRequest
+        .delete(articlesRoutes.delete(articleId))
+        .set(commonHeaders);
+
+      expect(cleanupArticle.statusCode).toBe(StatusCodes.NO_CONTENT);
     });
   });
 });

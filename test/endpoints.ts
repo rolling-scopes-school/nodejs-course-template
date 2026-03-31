@@ -6,35 +6,27 @@ export const usersRoutes = {
   delete: (userId) => `/user/${userId}`,
 };
 
-export const artistsRoutes = {
-  getAll: '/artist',
-  getById: (artistId) => `/artist/${artistId}`,
-  create: '/artist',
-  update: (artistId) => `/artist/${artistId}`,
-  delete: (artistId) => `/artist/${artistId}`,
+export const categoriesRoutes = {
+  getAll: '/category',
+  getById: (categoryId) => `/category/${categoryId}`,
+  create: '/category',
+  update: (categoryId) => `/category/${categoryId}`,
+  delete: (categoryId) => `/category/${categoryId}`,
 };
 
-export const albumsRoutes = {
-  getAll: '/album',
-  getById: (albumId) => `/album/${albumId}`,
-  create: '/album',
-  update: (albumId) => `/album/${albumId}`,
-  delete: (albumId) => `/album/${albumId}`,
+export const articlesRoutes = {
+  getAll: '/article',
+  getById: (articleId) => `/article/${articleId}`,
+  create: '/article',
+  update: (articleId) => `/article/${articleId}`,
+  delete: (articleId) => `/article/${articleId}`,
 };
 
-export const tracksRoutes = {
-  getAll: '/track',
-  getById: (trackId) => `/track/${trackId}`,
-  create: '/track',
-  update: (trackId) => `/track/${trackId}`,
-  delete: (trackId) => `/track/${trackId}`,
-};
-
-export const favoritesRoutes = {
-  getAll: '/favs',
-  artists: (artistId) => `/favs/artist/${artistId}`,
-  albums: (albumId) => `/favs/album/${albumId}`,
-  tracks: (trackId) => `/favs/track/${trackId}`,
+export const commentsRoutes = {
+  getByArticle: (articleId) => `/comment?articleId=${articleId}`,
+  getById: (commentId) => `/comment/${commentId}`,
+  create: '/comment',
+  delete: (commentId) => `/comment/${commentId}`,
 };
 
 export const authRoutes = {

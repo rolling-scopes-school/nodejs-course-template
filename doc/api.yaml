@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
-  title: Home Library Service
-  description: Home music library service
+  title: Knowledge Hub
+  description: Knowledge hub service for managing articles, categories, and comments
   version: 1.0.0
 
 servers:
@@ -18,19 +18,21 @@ components:
         login:
           type: string
           example: 'TestUser'
-        version:
-          type: number
-          example: 1
-        createAt:
+        role:
+          type: string
+          enum: [admin, editor, viewer]
+          example: 'viewer'
+        createdAt:
           type: number
           example: 1655000000
-        updateAt:
+        updatedAt:
           type: number
           example: 1655000000
       required:
         - id
         - login
-    Artist:
+        - role
+    Category:
       type: object
       properties:
         id:
@@ -38,75 +40,81 @@ components:
           format: uuid
         name:
           type: string
-          example: 'Freddie Mercury'
-        grammy:
-          type: boolean
-          example: false
+          example: 'Technology'
+        description:
+          type: string
+          example: 'Articles about technology'
       required:
         - id
         - name
-    Album:
+        - description
+    Article:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        name:
+        title:
           type: string
-          example: 'Innuendo'
-        year:
-          type: integer
-          example: 1991
-        artistId:
+          example: 'Introduction to NestJS'
+        content:
+          type: string
+          example: 'NestJS is a framework for building efficient server-side applications.'
+        status:
+          type: string
+          enum: [draft, published, archived]
+          example: 'draft'
+        authorId:
           type: string
           format: uuid
           nullable: true
+        categoryId:
+          type: string
+          format: uuid
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+          example: ['nodejs', 'typescript']
+        createdAt:
+          type: number
+          example: 1655000000
+        updatedAt:
+          type: number
+          example: 1655000000
       required:
         - id
-        - name
-    Track:
+        - title
+        - content
+    Comment:
       type: object
       properties:
         id:
           type: string
           format: uuid
-        name:
+        content:
           type: string
-          example: The Show Must Go On
-        artistId:
+          example: 'Great article!'
+        articleId:
+          type: string
+          format: uuid
+        authorId:
           type: string
           format: uuid
           nullable: true
-        albumId:
-          type: string
-          format: uuid
-          nullable: true
-        duration:
-          type: integer
-          description: In seconds
-          example: 262
+        createdAt:
+          type: number
+          example: 1655000000
       required:
         - id
-        - name
-        - duration
-    Favorites:
-      type: object
-      properties:
-        artists:
-          type: array
-          items:
-            $ref: '#/components/schemas/Artist'
-        albums:
-          type: array
-          items:
-            $ref: '#/components/schemas/Album'
-        tracks:
-          type: array
-          items:
-            $ref: '#/components/schemas/Track'
+        - content
+        - articleId
   responses:
     UnauthorizedError:
       description: Access token is missing or invalid
+    ForbiddenError:
+      description: Insufficient permissions for this operation
   securitySchemes:
     bearerAuth:
       type: http
@@ -117,79 +125,110 @@ security:
   - bearerAuth: []
 
 paths:
-  /login:
+  /auth/signup:
     post:
       tags:
-        - Login
+        - Auth
       security: []
-      summary: Login
-      description: Logins a user and returns a JWT-token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              title: example
-              properties:
-                login:
-                  type: string
-                  description: Username
-                password:
-                  type: string
-                  description: Password
-              required:
-                - user
-                - login
-      responses:
-        200:
-          description: Successful login.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  token:
-                    type: string
-                description: JWT Token
-        403:
-          description: Incorrect login or password
-  /signup:
-    post:
-      tags:
-        - Signup
-      security: [ ]
       summary: Signup
-      description: Signup a user
+      description: Register a new user
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              title: example
               properties:
                 login:
                   type: string
-                  minLength: 3
-                  maxLength: 255
                   description: Username
                 password:
                   type: string
-                  format: password
-                  pattern: ^[a-zA-Z0-9]{3,30}
                   description: Password
               required:
                 - login
                 - password
       responses:
-        204:
+        201:
           description: Successful signup
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
         400:
           description: Bad request
-        409:
-          description: Conflict. Login already exists
-  /users:
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      security: []
+      summary: Login
+      description: Login and receive JWT tokens
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                login:
+                  type: string
+                  description: Username
+                password:
+                  type: string
+                  description: Password
+              required:
+                - login
+                - password
+      responses:
+        200:
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        403:
+          description: Incorrect login or password
+  /auth/refresh:
+    post:
+      tags:
+        - Auth
+      security: []
+      summary: Refresh tokens
+      description: Get new access and refresh tokens using a valid refresh token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refreshToken:
+                  type: string
+              required:
+                - refreshToken
+      responses:
+        200:
+          description: New token pair
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+        401:
+          description: No refresh token provided
+        403:
+          description: Invalid or expired refresh token
+  /user:
     get:
       tags:
         - Users
@@ -210,27 +249,27 @@ paths:
       tags:
         - Users
       summary: Create user
-      description: Creates a new user
+      description: Creates a new user (admin only)
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              title: example
               properties:
                 login:
                   type: string
-                  description: The user's login
                 password:
                   type: string
-                  description: The user's password
+                role:
+                  type: string
+                  enum: [admin, editor, viewer]
               required:
                 - login
                 - password
       responses:
         201:
-          description: The user has been created.
+          description: The user has been created
           content:
             application/json:
               schema:
@@ -239,7 +278,9 @@ paths:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /users/{userId}:
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+  /user/{userId}:
     parameters:
       - name: userId
         in: path
@@ -264,7 +305,6 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         404:
           description: User not found
-
     put:
       tags:
         - Users
@@ -276,55 +316,34 @@ paths:
           application/json:
             schema:
               type: object
-              title: example
               properties:
                 oldPassword:
                   type: string
-                  description: The user's old password
                 newPassword:
                   type: string
-                  description: The user's new password
               required:
                 - oldPassword
                 - newPassword
       responses:
         200:
-          description: The user has been updated.
+          description: The user has been updated
           content:
             application/json:
               schema:
-                type: object
-                title: example
-                properties:
-                  id:
-                    type: string
-                    format: uuid
-                  login:
-                    type: string
-                    example: TestUser
-                  version:
-                    type: integer
-                    example: 2
-                  createAt:
-                    type: integer
-                    example: 1655000000
-                  updateAt:
-                    type: integer
-                    example: 1655999999
+                $ref: '#/components/schemas/User'
         400:
           description: Bad request. userId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
         403:
-          description: oldPassword is wrong
+          description: oldPassword is wrong or insufficient permissions
         404:
           description: User not found
-
     delete:
       tags:
         - Users
       summary: Delete user
-      description: Deletes user by ID.
+      description: Deletes user by ID. Sets authorId to null on articles, deletes user's comments.
       responses:
         204:
           description: The user has been deleted
@@ -332,14 +351,16 @@ paths:
           description: Bad request. userId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
         404:
           description: User not found
-  /tracks:
+  /category:
     get:
       tags:
-        - Track
-      summary: Get tracks list
-      description: Gets all library tracks list
+        - Category
+      summary: Get all categories
+      description: Gets all categories
       responses:
         200:
           description: Successful operation
@@ -348,14 +369,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Track'
+                  $ref: '#/components/schemas/Category'
         401:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Track
-      summary: Add new track
-      description: Add new track information
+        - Category
+      summary: Add new category
+      description: Add new category (admin only)
       requestBody:
         required: true
         content:
@@ -365,30 +386,25 @@ paths:
               properties:
                 name:
                   type: string
-                artistId:
+                description:
                   type: string
-                  format: uuid
-                albumId:
-                  type: string
-                  format: uuid
-                duration:
-                  type: integer
-                  description: In seconds
               required:
                 - name
-                - duration
+                - description
       responses:
         201:
-          description: Successful operation
+          description: Category is created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Track'
+                $ref: '#/components/schemas/Category'
         400:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /tracks/{id}:
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+  /category/{id}:
     parameters:
       - name: id
         in: path
@@ -398,106 +414,96 @@ paths:
           format: uuid
     get:
       tags:
-        - Track
-      summary: Get single track by id
-      description: Gets single track by id
+        - Category
+      summary: Get single category by id
+      description: Gets single category by id
       responses:
         200:
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Track'
+                $ref: '#/components/schemas/Category'
         400:
-          description: Bad request. trackId is invalid (not uuid)
+          description: Bad request. categoryId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Track was not found.
+          description: Category was not found
     put:
       tags:
-        - Track
-      summary: Update track information
-      description: Update library track information by UUID
+        - Category
+      summary: Update category information
+      description: Update category information by UUID (admin only)
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              title: example
               properties:
                 name:
                   type: string
-                  example: Bohemian Rhapsody
-                artistId:
+                description:
                   type: string
-                  format: uuid
-                  nullable: true
-                duration:
-                  type: integer
-                  description: In seconds
-                  example: 355
-                albumId:
-                  type: string
-                  format: uuid
-                  nullable: true
               required:
                 - name
-                - duration
+                - description
       responses:
         200:
-          description: The track has been updated.
+          description: The category has been updated
           content:
             application/json:
               schema:
-                type: object
-                title: example
-                properties:
-                  id:
-                    type: string
-                    format: uuid
-                  name:
-                    type: string
-                    example: Bohemian Rhapsody
-                  artistId:
-                    type: string
-                    format: uuid
-                    nullable: true
-                  duration:
-                    type: integer
-                    description: In seconds
-                    example: 355
-                  albumId:
-                    type: string
-                    format: uuid
-                    nullable: true
+                $ref: '#/components/schemas/Category'
         400:
-          description: Bad request. trackId is invalid (not uuid)
+          description: Bad request. categoryId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
         404:
-          description: Track was not found.
+          description: Category was not found
     delete:
       tags:
-        - Track
-      summary: Delete track
-      description: Delete track from library
+        - Category
+      summary: Delete category
+      description: Delete category. Sets categoryId to null on associated articles.
       responses:
         204:
           description: Deleted successfully
         400:
-          description: Bad request. trackId is invalid (not uuid)
+          description: Bad request. categoryId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
         404:
-          description: Track was not found.
-  /albums:
+          description: Category was not found
+  /article:
     get:
       tags:
-        - Album
-      summary: Get albums list
-      description: Gets all library albums list
+        - Article
+      summary: Get articles list
+      description: Gets all articles. Supports filtering by status, categoryId, and tag.
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, published, archived]
+          description: Filter by article status
+        - name: categoryId
+          in: query
+          schema:
+            type: string
+            format: uuid
+          description: Filter by category ID
+        - name: tag
+          in: query
+          schema:
+            type: string
+          description: Filter by tag name (can be repeated for multiple tags)
       responses:
         200:
           description: Successful operation
@@ -506,45 +512,57 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Album'
+                  $ref: '#/components/schemas/Article'
         401:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Album
-      summary: Add new album
-      description: Add new album information
+        - Article
+      summary: Add new article
+      description: Add new article (editor can create own, admin can create any)
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              title: example
               properties:
-                name:
+                title:
                   type: string
-                year:
-                  type: integer
-                artistId:
+                content:
+                  type: string
+                status:
+                  type: string
+                  enum: [draft, published, archived]
+                authorId:
                   type: string
                   format: uuid
                   nullable: true
+                categoryId:
+                  type: string
+                  format: uuid
+                  nullable: true
+                tags:
+                  type: array
+                  items:
+                    type: string
               required:
-                - name
-                - year
+                - title
+                - content
       responses:
         201:
-          description: Album is created
+          description: Article is created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Album'
+                $ref: '#/components/schemas/Article'
         400:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /albums/{id}:
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+  /article/{id}:
     parameters:
       - name: id
         in: path
@@ -554,79 +572,94 @@ paths:
           format: uuid
     get:
       tags:
-        - Album
-      summary: Get single album by id
-      description: Gets single album by id
+        - Article
+      summary: Get single article by id
+      description: Gets single article by id
       responses:
         200:
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Album'
+                $ref: '#/components/schemas/Article'
         400:
-          description: Bad request. albumId is invalid (not uuid)
+          description: Bad request. articleId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Album was not found.
+          description: Article was not found
     put:
       tags:
-        - Album
-      summary: Update album information
-      description: Update library album information by UUID
+        - Article
+      summary: Update article information
+      description: Update article by UUID (editor can update own, admin can update any)
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
-              title: example
               properties:
-                name:
+                title:
                   type: string
-                year:
-                  type: integer
-                artistId:
+                content:
+                  type: string
+                status:
+                  type: string
+                  enum: [draft, published, archived]
+                categoryId:
                   type: string
                   format: uuid
                   nullable: true
-              required:
-                - name
-                - year
+                tags:
+                  type: array
+                  items:
+                    type: string
       responses:
         200:
-          description: The album has been updated.
+          description: The article has been updated
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Album'
+                $ref: '#/components/schemas/Article'
         400:
-          description: Bad request. albumId is invalid (not uuid)
+          description: Bad request. articleId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
         404:
-          description: Album was not found.
+          description: Article was not found
     delete:
       tags:
-        - Album
-      summary: Delete album
-      description: Delete album from library
+        - Article
+      summary: Delete article
+      description: Delete article. Deletes all associated comments. (admin only)
       responses:
         204:
           description: Deleted successfully
         400:
-          description: Bad request. albumId is invalid (not uuid)
+          description: Bad request. articleId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
         404:
-          description: Album was not found.
-  /artists:
+          description: Article was not found
+  /comment:
     get:
       tags:
-        - Artist
-      summary: Get all artists
-      description: Gets all artists
+        - Comment
+      summary: Get comments for an article
+      description: Gets all comments for a specific article. Requires articleId query parameter.
+      parameters:
+        - name: articleId
+          in: query
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Article ID to get comments for
       responses:
         200:
           description: Successful operation
@@ -635,14 +668,14 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Artist'
+                  $ref: '#/components/schemas/Comment'
         401:
           $ref: '#/components/responses/UnauthorizedError'
     post:
       tags:
-        - Artist
-      summary: Add new artist
-      description: Add new artist
+        - Comment
+      summary: Add new comment
+      description: Add a comment to an article (editor can create own, admin can create any)
       requestBody:
         required: true
         content:
@@ -650,25 +683,34 @@ paths:
             schema:
               type: object
               properties:
-                name:
+                content:
                   type: string
-                grammy:
-                  type: boolean
+                articleId:
+                  type: string
+                  format: uuid
+                authorId:
+                  type: string
+                  format: uuid
+                  nullable: true
               required:
-                - name
-                - grammy
+                - content
+                - articleId
       responses:
         201:
-          description: Successful operation
+          description: Comment is created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Artist'
+                $ref: '#/components/schemas/Comment'
         400:
           description: Bad request. body does not contain required fields
         401:
           $ref: '#/components/responses/UnauthorizedError'
-  /artists/{id}:
+        403:
+          $ref: '#/components/responses/ForbiddenError'
+        422:
+          description: Article with given articleId doesn't exist
+  /comment/{id}:
     parameters:
       - name: id
         in: path
@@ -678,188 +720,35 @@ paths:
           format: uuid
     get:
       tags:
-        - Artist
-      summary: Get single artist by id
-      description: Get single artist by id
+        - Comment
+      summary: Get single comment by id
+      description: Gets single comment by id
       responses:
         200:
           description: Successful operation
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Artist'
+                $ref: '#/components/schemas/Comment'
         400:
-          description: Bad request. artistId is invalid (not uuid)
+          description: Bad request. commentId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
         404:
-          description: Artist was not found.
-    put:
-      tags:
-        - Artist
-      summary: Update artist information
-      description: Update artist information by UUID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                grammy:
-                  type: boolean
-              required:
-                - name
-                - grammy
-      responses:
-        200:
-          description: The artist has been updated.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Artist'
-        400:
-          description: Bad request. artistId is invalid (not uuid)
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        404:
-          description: Artist was not found.
+          description: Comment was not found
     delete:
       tags:
-        - Artist
-      summary: Delete artist
-      description: Delete artist from library
+        - Comment
+      summary: Delete comment
+      description: Delete comment (admin can delete any, editor can delete own)
       responses:
         204:
           description: Deleted successfully
         400:
-          description: Bad request. artistId is invalid (not uuid)
+          description: Bad request. commentId is invalid (not uuid)
         401:
           $ref: '#/components/responses/UnauthorizedError'
+        403:
+          $ref: '#/components/responses/ForbiddenError'
         404:
-          description: Artist was not found.
-  /favs:
-    get:
-      tags:
-        - Favorites
-      summary: Get all favorites
-      description: Gets all favorites movies, tracks and books
-      responses:
-        200:
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Favorites'
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-  /favs/track/{id}:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-    post:
-      tags:
-        - Favorites
-      summary: Add track to the favorites
-      description: Add track to the favorites
-      responses:
-        201:
-          description: Added successfully
-        400:
-          description: Bad. trackId is invalid (not uuid)
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        422:
-          description: Track with id doesn't exist.
-    delete:
-      tags:
-        - Favorites
-      summary: Delete track from favorites
-      description: Delete track from favorites
-      responses:
-        204:
-          description: Deleted successfully
-        400:
-          description: Bad. trackId is invalid (not uuid)
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        404:
-          description: Track was not found.
-  /favs/album/{id}:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-    post:
-      tags:
-        - Favorites
-      summary: Add album to the favorites
-      description: Add album to the favorites
-      responses:
-        201:
-          description: Added successfully
-        400:
-          description: Bad. albumId is invalid (not uuid)
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        422:
-          description: Album with id doesn't exist.
-    delete:
-      tags:
-        - Favorites
-      summary: Delete album from favorites
-      description: Delete album from favorites
-      responses:
-        204:
-          description: Deleted successfully
-        400:
-          description: Bad. albumId is invalid (not uuid)
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        404:
-          description: Album was not found.
-  /favs/artist/{id}:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-    post:
-      tags:
-        - Favorites
-      summary: Add artist to the favorites
-      description: Add artist to the favorites
-      responses:
-        201:
-          description: Added successfully
-        400:
-          description: Bad request. artistId is invalid (not uuid)
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        422:
-          description: Artist with id doesn't exist.
-    delete:
-      tags:
-        - Favorites
-      summary: Delete artist from favorites
-      description: Delete artist from favorites
-      responses:
-        204:
-          description: Deleted successfully
-        400:
-          description: Bad request. artistId is invalid (not uuid)
-        401:
-          $ref: '#/components/responses/UnauthorizedError'
-        404:
-          description: Artist was not found.
+          description: Comment was not found

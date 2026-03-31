@@ -1,4 +1,4 @@
-# Home Library Service
+# Knowledge Hub
 
 ## Prerequisites
 
@@ -53,6 +53,18 @@ To run only specific test suite with authorization
 
 ```
 npm run test:auth -- <path to suite>
+```
+
+To run refresh token tests
+
+```
+npm run test:refresh
+```
+
+To run RBAC (role-based access control) tests
+
+```
+npm run test:rbac
 ```
 
 ### Auto-fix and format

@@ -1,33 +1,26 @@
 import { request } from '../lib';
+import { commentsRoutes } from '../endpoints';
 import { StatusCodes } from 'http-status-codes';
-import { tracksRoutes } from '../endpoints';
-
-const createTrackDto = {
-  name: 'TEST_TRACK',
-  duration: 199,
-  artistId: null,
-  albumId: null,
-};
 
 // Probability of collisions for UUID is almost zero
 const randomUUID = '0a35dd62-e09f-444b-a628-f4e7c6954f57';
 
-describe('Tracks (e2e)', () => {
+describe('Comment (e2e)', () => {
   const commonHeaders = { Accept: 'application/json' };
 
-  describe('GET all tracks', () => {
+  describe('GET comments by articleId', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
       await request
-        .get(tracksRoutes.getAll)
+        .get(commentsRoutes.getByArticle(randomUUID))
         .set(commonHeaders)
         .expect(StatusCodes.UNAUTHORIZED);
     });
   });
 
-  describe('GET track by id', () => {
+  describe('GET comment by id', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
       await request
-        .get(tracksRoutes.getById(randomUUID))
+        .get(commentsRoutes.getById(randomUUID))
         .set(commonHeaders)
         .expect(StatusCodes.UNAUTHORIZED);
     });
@@ -36,23 +29,12 @@ describe('Tracks (e2e)', () => {
   describe('POST', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
       await request
-        .post(tracksRoutes.create)
-        .set(commonHeaders)
-        .send(createTrackDto)
-        .expect(StatusCodes.UNAUTHORIZED);
-    });
-  });
-
-  describe('PUT', () => {
-    it('should get UNAUTHORIZED without token presented', async () => {
-      await request
-        .put(tracksRoutes.update(randomUUID))
+        .post(commentsRoutes.create)
         .set(commonHeaders)
         .send({
-          name: createTrackDto.name,
-          duration: 188,
-          artistId: createTrackDto.artistId,
-          albumId: createTrackDto.albumId,
+          content: 'Test comment',
+          articleId: randomUUID,
+          authorId: null,
         })
         .expect(StatusCodes.UNAUTHORIZED);
     });
@@ -61,7 +43,7 @@ describe('Tracks (e2e)', () => {
   describe('DELETE', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
       await request
-        .delete(tracksRoutes.delete(randomUUID))
+        .delete(commentsRoutes.delete(randomUUID))
         .set(commonHeaders)
         .expect(StatusCodes.UNAUTHORIZED);
     });

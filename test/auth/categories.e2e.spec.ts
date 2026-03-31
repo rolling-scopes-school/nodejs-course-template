@@ -1,30 +1,31 @@
 import { request } from '../lib';
-import { artistsRoutes } from '../endpoints';
+import { categoriesRoutes } from '../endpoints';
 import { StatusCodes } from 'http-status-codes';
 
-const createArtistDto = {
-  name: 'TEST_artist',
-  grammy: true,
+const createCategoryDto = {
+  name: 'TEST_CATEGORY',
+  description: 'Test category description',
 };
 
 // Probability of collisions for UUID is almost zero
 const randomUUID = '0a35dd62-e09f-444b-a628-f4e7c6954f57';
 
-describe('artist (e2e)', () => {
+describe('Category (e2e)', () => {
   const commonHeaders = { Accept: 'application/json' };
-  describe('GET all artists', () => {
+
+  describe('GET all categories', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
       await request
-        .get(artistsRoutes.getAll)
+        .get(categoriesRoutes.getAll)
         .set(commonHeaders)
         .expect(StatusCodes.UNAUTHORIZED);
     });
   });
 
-  describe('GET artist by id', () => {
+  describe('GET category by id', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
       await request
-        .get(artistsRoutes.getById(randomUUID))
+        .get(categoriesRoutes.getById(randomUUID))
         .set(commonHeaders)
         .expect(StatusCodes.UNAUTHORIZED);
     });
@@ -33,9 +34,9 @@ describe('artist (e2e)', () => {
   describe('POST', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
       await request
-        .post(artistsRoutes.create)
+        .post(categoriesRoutes.create)
         .set(commonHeaders)
-        .send(createArtistDto)
+        .send(createCategoryDto)
         .expect(StatusCodes.UNAUTHORIZED);
     });
   });
@@ -43,11 +44,11 @@ describe('artist (e2e)', () => {
   describe('PUT', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
       await request
-        .put(artistsRoutes.update(randomUUID))
+        .put(categoriesRoutes.update(randomUUID))
         .set(commonHeaders)
         .send({
-          name: createArtistDto.name,
-          grammy: false,
+          name: createCategoryDto.name,
+          description: 'Updated',
         })
         .expect(StatusCodes.UNAUTHORIZED);
     });
@@ -56,7 +57,7 @@ describe('artist (e2e)', () => {
   describe('DELETE', () => {
     it('should get UNAUTHORIZED without token presented', async () => {
       await request
-        .delete(artistsRoutes.delete(randomUUID))
+        .delete(categoriesRoutes.delete(randomUUID))
         .set(commonHeaders)
         .expect(StatusCodes.UNAUTHORIZED);
     });
