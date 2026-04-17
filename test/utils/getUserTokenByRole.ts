@@ -1,14 +1,17 @@
-import { authRoutes, usersRoutes } from '../endpoints';
+import { authRoutes } from '../endpoints';
+import promoteUserRole from './promoteUserRole';
 
 const getUserTokenByRole = async (
   request,
   role: 'admin' | 'editor' | 'viewer',
-  adminHeaders: Record<string, string>,
+  // kept for signature compatibility with existing RBAC specs; unused now
+  // because role promotion happens directly via Prisma
+  _adminHeaders?: Record<string, string>,
 ) => {
   const login = `TEST_RBAC_${role.toUpperCase()}_${Date.now()}`;
   const password = 'TestPass123!';
 
-  // Create user via signup
+  // Create user via signup (defaults to viewer)
   const signupResponse = await request
     .post(authRoutes.signup)
     .set({ Accept: 'application/json' })
@@ -20,19 +23,11 @@ const getUserTokenByRole = async (
     throw new Error(`Failed to create ${role} user`);
   }
 
-  // If role is not 'viewer' (default), update user role via admin
   if (role !== 'viewer') {
-    const updateRoleResponse = await request
-      .put(usersRoutes.update(userId))
-      .set(adminHeaders)
-      .send({ role });
-
-    if (updateRoleResponse.statusCode >= 400) {
-      throw new Error(`Failed to set role ${role} for user ${userId}`);
-    }
+    await promoteUserRole(userId, role);
   }
 
-  // Login to get tokens
+  // Login AFTER promotion so JWT payload carries the correct role
   const loginResponse = await request
     .post(authRoutes.login)
     .set({ Accept: 'application/json' })
