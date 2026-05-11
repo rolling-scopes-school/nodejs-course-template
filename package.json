@@ -42,7 +42,7 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.4.9",
+    "@nestjs/cli": "^11.0.16",
     "@nestjs/schematics": "^10.0.3",
     "@nestjs/testing": "^10.2.8",
     "@prisma/adapter-pg": "^7.7.0",
